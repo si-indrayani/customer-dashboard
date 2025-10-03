@@ -1,0 +1,469 @@
+import React, { useState } from 'react';
+import { Eye, Gamepad2, CheckCircle, X } from 'lucide-react';
+import Table from '../components/Table';
+import StatsCard from '../components/StatsCard';
+import ConfirmationModal from '../components/ConfirmationModal';
+import ToggleSwitch from '../components/ToggleSwitch';
+
+import { useGetTenantsQuery, useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation } from '../store/api/gamesApi';
+import './Games.css';
+
+const Games: React.FC = () => {
+  const [currentTenantId, setCurrentTenantId] = useState(''); // No default tenant, user must enter one
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [gameToToggle, setGameToToggle] = useState<{ id: number; currentStatus: string; title: string } | null>(null);
+  const [showActivationModal, setShowActivationModal] = useState(false);
+  const [gameToActivate, setGameToActivate] = useState<{ clientGameId: number; currentActive: boolean; title: string } | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
+  
+  // Array of dummy game images to randomly assign
+  const dummyImages = [
+    'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1585504198199-20277593b94f?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1556438064-2d7646166914?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=100&h=100&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=100&h=100&fit=crop&crop=center'
+  ];
+
+  // Function to get random image for a game (consistent per game ID)
+  const getRandomImage = (gameId: number) => {
+    // Use game ID to ensure consistent image assignment for the same game
+    const index = gameId % dummyImages.length;
+    return dummyImages[index];
+  };
+  
+  // Mock data for development when API is not available (without hardcoded images)
+  const mockGames = [
+    {
+      id: 1,
+      title: "Space Explorer",
+      description: "Explore the galaxy in this space adventure",
+      gameType: "HOSTED_LINK" as const,
+      url: "https://example.com/space-explorer",
+      status: "ACTIVE" as const,
+      createdAt: "2024-01-15T10:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Math Challenge",
+      description: "Test your math skills",
+      gameType: "UPLOADED_BUILD" as const,
+      url: "https://example.com/math-challenge",
+      status: "ACTIVE" as const,
+      createdAt: "2024-01-10T08:00:00Z"
+    },
+    {
+      id: 3,
+      title: "Word Puzzle",
+      description: "Solve challenging word puzzles",
+      gameType: "HOSTED_LINK" as const,
+      url: "https://example.com/word-puzzle",
+      status: "DEPRECATED" as const,
+      createdAt: "2024-01-05T12:00:00Z"
+    }
+  ];
+
+  const mockClientGames = [
+    {
+      id: 7,
+      gameId: 1,
+      tenantId: "tenant_1",
+      isActive: true,
+      game: mockGames[0],
+      createdAt: "2024-01-15T10:00:00Z",
+      updatedAt: "2024-01-16T14:35:00Z"
+    },
+    {
+      id: 8,
+      gameId: 2,
+      tenantId: "tenant_1",
+      isActive: false,
+      game: mockGames[1],
+      createdAt: "2024-01-10T08:00:00Z",
+      updatedAt: "2024-01-14T16:20:00Z"
+    }
+  ];
+
+  // Use RTK Query hooks for games data and stats (with fallback to mock)
+  // Get all tenants for dropdown
+  const { data: tenants, isLoading: isLoadingTenants } = useGetTenantsQuery();
+  
+  // Get client-specific games (only call when tenant is selected)
+  const { 
+    data: apiClientGames, 
+    isLoading: isLoadingClientGames, 
+    error: clientGamesError
+  } = useGetClientGamesQuery(currentTenantId, {
+    skip: !currentTenantId, // Skip the query when no tenant is selected
+  });
+  
+  // Mutation for updating client game status
+  const [updateClientGameStatus, { isLoading: isUpdatingStatus }] = useUpdateClientGameStatusMutation();
+  
+  // Mutation for updating game status
+  const [updateGame, { isLoading: isUpdatingGameStatus }] = useUpdateGameMutation();
+
+  // Use only client games data - no general games API call
+  const clientGames = currentTenantId ? (apiClientGames?.length ? apiClientGames : []) : [];
+  const totalGames = currentTenantId ? clientGames.length : 0;
+  const activeGames = currentTenantId ? clientGames.filter(cg => cg.isActive).length : 0;
+
+  // Debug: Log the actual client games data
+  console.log('=== GAMES DEBUG ===');
+  console.log('Client Games data:', clientGames);
+  console.log('Current Tenant ID:', currentTenantId);
+  console.log('Is loading client games:', isLoadingClientGames);
+  console.log('Client error:', clientGamesError);
+  console.log('==================');
+
+  // Handle show/hide game toggle - show confirmation first
+  const handleToggleGameVisibility = (clientGameId: number, currentStatus: boolean, gameTitle: string) => {
+    setGameToActivate({ clientGameId, currentActive: currentStatus, title: gameTitle });
+    setShowActivationModal(true);
+  };
+
+  // Confirm activation/deactivation
+  const handleConfirmActivation = async () => {
+    if (!gameToActivate) return;
+
+    try {
+      if (apiClientGames?.length) {
+        // Use real API if available
+        await updateClientGameStatus({
+          id: gameToActivate.clientGameId,
+          isActive: !gameToActivate.currentActive,
+        }).unwrap();
+        console.log('Game visibility updated successfully');
+        
+        // Show success toast
+        const action = gameToActivate.currentActive ? 'deactivated' : 'activated';
+        setToastMessage({
+          status: 'success',
+          message: `Game "${gameToActivate.title}" has been ${action} successfully.`
+        });
+        
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => setToastMessage(null), 3000);
+      } else {
+        // Show demo behavior with mock data
+        console.log(`Demo: Would ${gameToActivate.currentActive ? 'hide' : 'show'} game with client ID ${gameToActivate.clientGameId}`);
+        
+        // Show demo success toast instead of alert
+        const action = gameToActivate.currentActive ? 'deactivated' : 'activated';
+        setToastMessage({
+          status: 'success',
+          message: `Demo: Game "${gameToActivate.title}" would be ${action}.`
+        });
+        
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => setToastMessage(null), 3000);
+      }
+    } catch (error) {
+      console.error('Failed to update game visibility:', error);
+      
+      // Show error toast instead of alert
+      const action = gameToActivate.currentActive ? 'deactivate' : 'activate';
+      setToastMessage({
+        status: 'error',
+        message: `Failed to ${action} game "${gameToActivate.title}". Please try again.`
+      });
+      
+      // Auto-hide toast after 5 seconds for errors
+      setTimeout(() => setToastMessage(null), 5000);
+    } finally {
+      setShowActivationModal(false);
+      setGameToActivate(null);
+    }
+  };
+
+  // Close activation modal
+  const handleCloseActivationModal = () => {
+    setShowActivationModal(false);
+    setGameToActivate(null);
+  };
+
+  // Handle game status toggle
+  const handleStatusToggleClick = (gameId: number, currentStatus: string, gameTitle: string) => {
+    setGameToToggle({ id: gameId, currentStatus, title: gameTitle });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmStatusToggle = async () => {
+    if (!gameToToggle) return;
+
+    try {
+      const newStatus = gameToToggle.currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+      
+      await updateGame({
+        id: gameToToggle.id,
+        updates: { status: newStatus }
+      }).unwrap();
+      
+      console.log(`Game status updated to ${newStatus}`);
+      setShowConfirmModal(false);
+      setGameToToggle(null);
+    } catch (error) {
+      console.error('Failed to update game status:', error);
+      alert('Error updating game status. Please check the API connection.');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowConfirmModal(false);
+    setGameToToggle(null);
+  };
+
+
+
+  // Compute table data from client games ONLY when tenant ID is provided
+  const tableData = currentTenantId && clientGames && clientGames.length > 0 ? 
+    clientGames.map(clientGame => ({
+      id: clientGame.game.id,
+      title: clientGame.game.title,
+      description: (clientGame as any).description || clientGame.game.description,
+      gameType: clientGame.game.gameType,
+      url: clientGame.game.url,
+      status: clientGame.game.status,
+      isActive: clientGame.isActive,
+      clientGameId: clientGame.id,
+      tenantId: clientGame.tenantId,
+      createdAt: clientGame.createdAt,
+      tenantName: (clientGame as any).tenant?.name,
+      imageUrl: getRandomImage(clientGame.game.id)
+    })) : [];
+
+  const gameColumns = [
+    {
+      key: 'title',
+      title: 'Game',
+      sortable: true,
+      render: (value: string, row: any) => (
+        <div className="game-title-cell">
+          <div className="game-title-row">
+            <img 
+              src={row.imageUrl} 
+              alt={row.title} 
+              className="game-image-inline"
+              onError={(e) => {
+                e.currentTarget.src = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop&crop=center";
+              }}
+            />
+            <div className="game-title-content">
+              <span className="game-title-text">{value}</span>
+              {row.description && (
+                <div className="game-description">{row.description}</div>
+              )}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    {
+      key: 'isActive',
+      title: 'Status',
+      sortable: true,
+      render: (value: boolean, row: any) => (
+        <div className="status-cell">
+          <ToggleSwitch
+            checked={value}
+            onChange={() => handleToggleGameVisibility(row.clientGameId, value, row.title)}
+            disabled={isUpdatingStatus}
+            size="md"
+            showLabels={false}
+          />
+        </div>
+      ),
+    },
+
+    {
+      key: 'url',
+      title: 'Game URL',
+      render: (value: string) => (
+        <a 
+          href={value} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="game-url"
+        >
+          <span className="url-icon">🔗</span>
+          {value.length > 35 ? `${value.substring(0, 35)}...` : value}
+        </a>
+      ),
+    },
+    {
+      key: 'createdAt',
+      title: 'Created At',
+      sortable: true,
+      render: (value: string) => (
+        <div className="date-cell">
+          <span className="date-primary">{new Date(value).toLocaleDateString()}</span>
+          <span className="date-secondary">{new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'description',
+      title: 'Description',
+      render: (value: string | null) => (
+        <span className="game-description">
+          {value || 'No description'}
+        </span>
+      ),
+    },
+  ];
+
+  // Calculate visibility stats
+  const visibleGames = clientGames?.filter(cg => cg.isActive).length || 0;
+  const configuredGames = clientGames?.length || 0;
+
+  // No default loading state needed since we don't load games by default
+
+  // Show basic info even if client games are still loading
+  console.log('Rendering games page with data:', { totalGames, activeGames, isLoadingClientGames });
+
+  return (
+    <div className="games-page">
+      <div className="games-stats">
+        <StatsCard
+          title="Total Games"
+          value={totalGames}
+          change="0"
+          changeType="neutral"
+          icon={Gamepad2}
+          color="blue"
+          animated={true}
+        />
+        
+        <StatsCard
+          title="Visible Games"
+          value={visibleGames}
+          change={configuredGames > 0 ? Math.round((visibleGames / configuredGames) * 100).toString() : "0"}
+          changeType={visibleGames > 0 ? "positive" : "neutral"}
+          icon={Eye}
+          color="green"
+          animated={true}
+        />
+        
+        <StatsCard
+          title="Configured Games"
+          value={configuredGames.toString()}
+          change={totalGames > 0 ? Math.round((configuredGames / totalGames) * 100).toString() : "0"}
+          changeType={configuredGames > 0 ? "positive" : "neutral"}
+          icon={Eye}
+          color="purple"
+        />
+        
+        <StatsCard
+          title="Active Rate"
+          value={`${Math.round((activeGames / totalGames) * 100) || 0}%`}
+          change={activeGames > (totalGames / 2) ? "5" : "-2"}
+          changeType={activeGames > (totalGames / 2) ? "positive" : "negative"}
+          icon={Gamepad2}
+          color="orange"
+        />
+      </div>
+
+      {/* Games Table with integrated tenant input */}
+      <div className="games-table">
+        <div className="table-header-with-input">
+          <h3 className="table-title-custom">Game Library</h3>
+          <div className="tenant-input-inline">
+            <label htmlFor="tenant-select" className="tenant-label-inline">
+              Select Tenant:
+            </label>
+            <select
+              id="tenant-select"
+              value={currentTenantId}
+              onChange={(e) => setCurrentTenantId(e.target.value)}
+              className="tenant-input-field tenant-dropdown"
+              disabled={isLoadingTenants}
+            >
+              <option value="">
+                {isLoadingTenants ? 'Loading tenants...' : 'Select a tenant'}
+              </option>
+              {tenants?.map((tenant) => (
+                <option key={tenant.id} value={tenant.id.toString()}>
+                  {tenant.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <Table
+          columns={gameColumns}
+          data={tableData}
+          loading={isLoadingClientGames}
+          emptyMessage={
+            currentTenantId ? 
+              `No games found for selected tenant` : 
+              "Please select a tenant to view games"
+          }
+          defaultSortKey="title"
+          defaultSortOrder="asc"
+          defaultItemsPerPage={10}
+          showPagination={true}
+        />
+      </div>
+
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmStatusToggle}
+        title="Change Game Status"
+        message={
+          gameToToggle
+            ? `Are you sure you want to ${gameToToggle.currentStatus === 'ACTIVE' ? 'deactivate' : 'activate'} the game "${gameToToggle.title}"?`
+            : ''
+        }
+        confirmText={gameToToggle?.currentStatus === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+        cancelText="Cancel"
+        isLoading={isUpdatingGameStatus}
+        type={gameToToggle?.currentStatus === 'ACTIVE' ? 'warning' : 'info'}
+      />
+
+      <ConfirmationModal
+        isOpen={showActivationModal}
+        onClose={handleCloseActivationModal}
+        onConfirm={handleConfirmActivation}
+        title="Change Game Status"
+        message={
+          gameToActivate
+            ? `Are you sure you want to ${gameToActivate.currentActive ? 'deactivate' : 'activate'} the game "${gameToActivate.title}"?`
+            : ''
+        }
+        confirmText={gameToActivate?.currentActive ? 'Deactivate' : 'Activate'}
+        cancelText="Cancel"
+        isLoading={isUpdatingStatus}
+        type={gameToActivate?.currentActive ? 'warning' : 'info'}
+      />
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className={`toast ${toastMessage.status === 'success' ? 'toast-success' : 'toast-error'}`}>
+          <div className="toast-content">
+            {toastMessage.status === 'success' ? (
+              <CheckCircle className="toast-icon" size={20} />
+            ) : (
+              <X className="toast-icon" size={20} />
+            )}
+            <span>{toastMessage.message}</span>
+          </div>
+          <button 
+            className="toast-close"
+            onClick={() => setToastMessage(null)}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Games;

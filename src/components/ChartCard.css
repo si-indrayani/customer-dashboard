@@ -1,0 +1,106 @@
+.chart-card {
+  background: var(--content-bg);
+  backdrop-filter: blur(8px);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateZ(0);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.chart-card:hover {
+  box-shadow: var(--shadow-hover);
+  background: var(--content-bg-hover);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.chart-card-header {
+  margin-bottom: 1rem;
+}
+
+.chart-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.chart-card-content {
+  height: 250px;
+  position: relative;
+  perspective: 1000px;
+  animation: slideInFromBottom 1s ease-out 0.3s both;
+}
+
+.chart-card-content canvas {
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.chart-card:hover .chart-card-content canvas {
+  transform: rotateX(2deg) rotateY(1deg);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.chart-card-title {
+  animation: slideInFromLeft 0.6s ease-out 0.2s both;
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .chart-card {
+    padding: 0.875rem;
+  }
+  
+  .chart-card-content {
+    height: 200px;
+  }
+  
+  .chart-card:hover .chart-card-content canvas {
+    transform: none;
+  }
+}

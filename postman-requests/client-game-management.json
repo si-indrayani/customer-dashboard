@@ -1,0 +1,213 @@
+{
+  "info": {
+    "name": "Update Client Game Status",
+    "description": "PUT /api/client-games/:id - Manage Game Library (Show / Hide Games)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Hide Game for Tenant",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "ngrok-skip-browser-warning",
+            "value": "true"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"isActive\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/client-games/7",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "client-games", "7"]
+        },
+        "description": "Update the active status of a client-specific game configuration to hide a game for a tenant."
+      },
+      "response": [
+        {
+          "name": "Hide Game Success",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/client-games/7",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "client-games", "7"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 7,\n  \"gameId\": 5,\n  \"tenantId\": \"tenant_1\",\n  \"isActive\": false,\n  \"game\": {\n    \"id\": 5,\n    \"title\": \"Space Explorer\",\n    \"description\": \"Explore the galaxy in this space adventure\",\n    \"gameType\": \"HOSTED_LINK\",\n    \"url\": \"https://example.com/space-explorer\",\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2024-01-15T10:00:00Z\"\n  },\n  \"createdAt\": \"2024-01-15T10:00:00Z\",\n  \"updatedAt\": \"2024-01-16T14:30:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Show Game for Tenant",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "ngrok-skip-browser-warning",
+            "value": "true"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"isActive\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/client-games/7",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "client-games", "7"]
+        },
+        "description": "Update the active status of a client-specific game configuration to show a game for a tenant."
+      },
+      "response": [
+        {
+          "name": "Show Game Success",
+          "originalRequest": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/client-games/7",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "client-games", "7"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"id\": 7,\n  \"gameId\": 5,\n  \"tenantId\": \"tenant_1\",\n  \"isActive\": true,\n  \"game\": {\n    \"id\": 5,\n    \"title\": \"Space Explorer\",\n    \"description\": \"Explore the galaxy in this space adventure\",\n    \"gameType\": \"HOSTED_LINK\",\n    \"url\": \"https://example.com/space-explorer\",\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2024-01-15T10:00:00Z\"\n  },\n  \"createdAt\": \"2024-01-15T10:00:00Z\",\n  \"updatedAt\": \"2024-01-16T14:35:00Z\"\n}\n"
+        }
+      ]
+    },
+    {
+      "name": "Get Client Games for Tenant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "accept",
+            "value": "application/json"
+          },
+          {
+            "key": "ngrok-skip-browser-warning",
+            "value": "true"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/client-games?tenantId=tenant_1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "client-games"],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "tenant_1"
+            }
+          ]
+        },
+        "description": "Get all client-specific game configurations for a tenant to see which games are visible/hidden."
+      },
+      "response": [
+        {
+          "name": "Get Client Games Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/client-games?tenantId=tenant_1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "client-games"],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "tenant_1"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "[\n  {\n    \"id\": 7,\n    \"gameId\": 5,\n    \"tenantId\": \"tenant_1\",\n    \"isActive\": true,\n    \"game\": {\n      \"id\": 5,\n      \"title\": \"Space Explorer\",\n      \"description\": \"Explore the galaxy in this space adventure\",\n      \"gameType\": \"HOSTED_LINK\",\n      \"url\": \"https://example.com/space-explorer\",\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"2024-01-15T10:00:00Z\"\n    },\n    \"createdAt\": \"2024-01-15T10:00:00Z\",\n    \"updatedAt\": \"2024-01-16T14:35:00Z\"\n  },\n  {\n    \"id\": 8,\n    \"gameId\": 3,\n    \"tenantId\": \"tenant_1\",\n    \"isActive\": false,\n    \"game\": {\n      \"id\": 3,\n      \"title\": \"Math Challenge\",\n      \"description\": \"Test your math skills\",\n      \"gameType\": \"UPLOADED_BUILD\",\n      \"url\": \"https://example.com/math-challenge\",\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"2024-01-10T08:00:00Z\"\n    },\n    \"createdAt\": \"2024-01-10T08:00:00Z\",\n    \"updatedAt\": \"2024-01-14T16:20:00Z\"\n  }\n]"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://undallying-leisha-outbound.ngrok-free.dev",
+      "description": "API base URL"
+    }
+  ]
+}

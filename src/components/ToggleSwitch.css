@@ -1,0 +1,181 @@
+/* Toggle Switch Styles */
+.toggle-switch-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggle-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.toggle-label.active {
+  color: #10b981;
+}
+
+.toggle-label.inactive {
+  color: #6b7280;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.toggle-switch:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.toggle-switch.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Size variants */
+.toggle-switch.sm {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+}
+
+.toggle-switch.md {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+}
+
+.toggle-switch.lg {
+  width: 56px;
+  height: 30px;
+  border-radius: 15px;
+}
+
+/* Background colors */
+.toggle-switch.unchecked {
+  background: #d1d5db;
+}
+
+.toggle-switch.checked {
+  background: #10b981;
+}
+
+.toggle-switch.unchecked:hover:not(.disabled) {
+  background: #9ca3af;
+}
+
+.toggle-switch.checked:hover:not(.disabled) {
+  background: #059669;
+}
+
+/* Slider */
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Slider sizes */
+.toggle-switch.sm .toggle-slider {
+  width: 14px;
+  height: 14px;
+}
+
+.toggle-switch.md .toggle-slider {
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-switch.lg .toggle-slider {
+  width: 26px;
+  height: 26px;
+}
+
+/* Slider positions */
+.toggle-switch.sm.checked .toggle-slider {
+  transform: translateX(14px);
+}
+
+.toggle-switch.md.checked .toggle-slider {
+  transform: translateX(20px);
+}
+
+.toggle-switch.lg.checked .toggle-slider {
+  transform: translateX(26px);
+}
+
+/* Container size variants for labels */
+.toggle-switch-container.sm .toggle-label {
+  font-size: 0.75rem;
+}
+
+.toggle-switch-container.md .toggle-label {
+  font-size: 0.875rem;
+}
+
+.toggle-switch-container.lg .toggle-label {
+  font-size: 1rem;
+}
+
+/* Dark mode */
+.dark .toggle-label.active {
+  color: #34d399;
+}
+
+.dark .toggle-label.inactive {
+  color: #9ca3af;
+}
+
+.dark .toggle-switch.unchecked {
+  background: #4b5563;
+}
+
+.dark .toggle-switch.checked {
+  background: #10b981;
+}
+
+.dark .toggle-switch.unchecked:hover:not(.disabled) {
+  background: #6b7280;
+}
+
+.dark .toggle-switch.checked:hover:not(.disabled) {
+  background: #059669;
+}
+
+.dark .toggle-slider {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation for smooth transitions */
+.toggle-switch {
+  animation: none;
+}
+
+.toggle-switch:active:not(.disabled) .toggle-slider {
+  width: calc(100% - 8px);
+}
+
+.toggle-switch.sm:active:not(.disabled) .toggle-slider {
+  width: 18px;
+}
+
+.toggle-switch.md:active:not(.disabled) .toggle-slider {
+  width: 24px;
+}
+
+.toggle-switch.lg:active:not(.disabled) .toggle-slider {
+  width: 30px;
+}

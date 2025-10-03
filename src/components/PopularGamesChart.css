@@ -1,0 +1,241 @@
+.popular-games-chart {
+  background: #ffffff !important;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  color: #1f2937;
+}
+
+.popular-games-chart.clickable {
+  cursor: pointer;
+}
+
+.popular-games-chart.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+}
+
+.popular-games-chart .chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.popular-games-chart .chart-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popular-games-chart .chart-header h3::before {
+  content: "🏆";
+  font-size: 20px;
+}
+
+.popular-games-chart .chart-subtitle {
+  font-size: 14px;
+  color: #6b7280 !important;
+  font-weight: 500;
+}
+
+.popular-games-chart .chart-container {
+  position: relative;
+  width: 100%;
+  background: transparent;
+}
+
+.popular-games-chart .loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280 !important;
+}
+
+.popular-games-chart .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.popular-games-chart .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #ef4444;
+  text-align: center;
+}
+
+.popular-games-chart .error-message button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.popular-games-chart .error-message button:hover {
+  background: #4f46e5;
+}
+
+.popular-games-chart .no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280 !important;
+  text-align: center;
+}
+
+.popular-games-chart .no-data-message p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #6b7280 !important;
+}
+
+.popular-games-chart .no-data-message small {
+  font-size: 12px;
+  color: #6366f1 !important;
+  font-weight: 500;
+}
+
+.popular-games-chart.error {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.popular-games-chart.loading .chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Explicit light theme overrides */
+[data-theme="light"] .popular-games-chart,
+.light .popular-games-chart,
+html[data-theme="light"] .popular-games-chart,
+html:not([data-theme]) .popular-games-chart,
+body:not(.dark) .popular-games-chart {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .popular-games-chart .chart-header h3,
+.light .popular-games-chart .chart-header h3,
+html[data-theme="light"] .popular-games-chart .chart-header h3,
+html:not([data-theme]) .popular-games-chart .chart-header h3,
+body:not(.dark) .popular-games-chart .chart-header h3 {
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .popular-games-chart .chart-subtitle,
+.light .popular-games-chart .chart-subtitle,
+html[data-theme="light"] .popular-games-chart .chart-subtitle,
+html:not([data-theme]) .popular-games-chart .chart-subtitle,
+body:not(.dark) .popular-games-chart .chart-subtitle {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .popular-games-chart .loading-spinner,
+.light .popular-games-chart .loading-spinner,
+html[data-theme="light"] .popular-games-chart .loading-spinner,
+html:not([data-theme]) .popular-games-chart .loading-spinner,
+body:not(.dark) .popular-games-chart .loading-spinner {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .popular-games-chart .no-data-message,
+.light .popular-games-chart .no-data-message,
+html[data-theme="light"] .popular-games-chart .no-data-message,
+html:not([data-theme]) .popular-games-chart .no-data-message,
+body:not(.dark) .popular-games-chart .no-data-message {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .popular-games-chart .no-data-message p,
+.light .popular-games-chart .no-data-message p,
+html[data-theme="light"] .popular-games-chart .no-data-message p,
+html:not([data-theme]) .popular-games-chart .no-data-message p,
+body:not(.dark) .popular-games-chart .no-data-message p {
+  color: #6b7280 !important;
+}
+
+/* Dark mode support - only when explicitly dark */
+[data-theme="dark"] .popular-games-chart,
+.dark .popular-games-chart,
+html[data-theme="dark"] .popular-games-chart {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] .popular-games-chart .chart-header h3,
+.dark .popular-games-chart .chart-header h3,
+html[data-theme="dark"] .popular-games-chart .chart-header h3 {
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] .popular-games-chart .chart-subtitle,
+.dark .popular-games-chart .chart-subtitle,
+html[data-theme="dark"] .popular-games-chart .chart-subtitle {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .popular-games-chart .loading-spinner,
+.dark .popular-games-chart .loading-spinner,
+html[data-theme="dark"] .popular-games-chart .loading-spinner {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .popular-games-chart .no-data-message,
+.dark .popular-games-chart .no-data-message,
+html[data-theme="dark"] .popular-games-chart .no-data-message {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .popular-games-chart .no-data-message p,
+.dark .popular-games-chart .no-data-message p,
+html[data-theme="dark"] .popular-games-chart .no-data-message p {
+  color: #9ca3af !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .popular-games-chart {
+    padding: 16px;
+  }
+
+  .popular-games-chart .chart-header h3 {
+    font-size: 16px;
+  }
+
+  .popular-games-chart .chart-subtitle {
+    font-size: 12px;
+  }
+}

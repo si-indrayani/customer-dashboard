@@ -1,0 +1,241 @@
+.game-engagement-chart {
+  background: #ffffff !important;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  color: #1f2937;
+}
+
+.game-engagement-chart.clickable {
+  cursor: pointer;
+}
+
+.game-engagement-chart.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  border-color: #8b5cf6;
+}
+
+.game-engagement-chart .chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.game-engagement-chart .chart-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-engagement-chart .chart-header h3::before {
+  content: "🎮";
+  font-size: 20px;
+}
+
+.game-engagement-chart .chart-subtitle {
+  font-size: 14px;
+  color: #6b7280 !important;
+  font-weight: 500;
+}
+
+.game-engagement-chart .chart-container {
+  position: relative;
+  width: 100%;
+  background: transparent;
+}
+
+.game-engagement-chart .loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280 !important;
+}
+
+.game-engagement-chart .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #8b5cf6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.game-engagement-chart .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #ef4444;
+  text-align: center;
+}
+
+.game-engagement-chart .error-message button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.game-engagement-chart .error-message button:hover {
+  background: #7c3aed;
+}
+
+.game-engagement-chart .no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6b7280 !important;
+  text-align: center;
+}
+
+.game-engagement-chart .no-data-message p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #6b7280 !important;
+}
+
+.game-engagement-chart .no-data-message small {
+  font-size: 12px;
+  color: #8b5cf6 !important;
+  font-weight: 500;
+}
+
+.game-engagement-chart.error {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.game-engagement-chart.loading .chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dark mode support - only apply when explicitly in dark mode */
+[data-theme="dark"] .game-engagement-chart,
+.dark .game-engagement-chart,
+html[data-theme="dark"] .game-engagement-chart {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] .game-engagement-chart .chart-header h3,
+.dark .game-engagement-chart .chart-header h3,
+html[data-theme="dark"] .game-engagement-chart .chart-header h3 {
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] .game-engagement-chart .chart-subtitle,
+.dark .game-engagement-chart .chart-subtitle,
+html[data-theme="dark"] .game-engagement-chart .chart-subtitle {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .game-engagement-chart .loading-spinner,
+.dark .game-engagement-chart .loading-spinner,
+html[data-theme="dark"] .game-engagement-chart .loading-spinner {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .game-engagement-chart .no-data-message,
+.dark .game-engagement-chart .no-data-message,
+html[data-theme="dark"] .game-engagement-chart .no-data-message {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .game-engagement-chart .no-data-message p,
+.dark .game-engagement-chart .no-data-message p,
+html[data-theme="dark"] .game-engagement-chart .no-data-message p {
+  color: #9ca3af !important;
+}
+
+/* Explicit light theme overrides */
+[data-theme="light"] .game-engagement-chart,
+.light .game-engagement-chart,
+html[data-theme="light"] .game-engagement-chart,
+html:not([data-theme]) .game-engagement-chart,
+body:not(.dark) .game-engagement-chart {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .game-engagement-chart .chart-header h3,
+.light .game-engagement-chart .chart-header h3,
+html[data-theme="light"] .game-engagement-chart .chart-header h3,
+html:not([data-theme]) .game-engagement-chart .chart-header h3,
+body:not(.dark) .game-engagement-chart .chart-header h3 {
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .game-engagement-chart .chart-subtitle,
+.light .game-engagement-chart .chart-subtitle,
+html[data-theme="light"] .game-engagement-chart .chart-subtitle,
+html:not([data-theme]) .game-engagement-chart .chart-subtitle,
+body:not(.dark) .game-engagement-chart .chart-subtitle {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .game-engagement-chart .loading-spinner,
+.light .game-engagement-chart .loading-spinner,
+html[data-theme="light"] .game-engagement-chart .loading-spinner,
+html:not([data-theme]) .game-engagement-chart .loading-spinner,
+body:not(.dark) .game-engagement-chart .loading-spinner {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .game-engagement-chart .no-data-message,
+.light .game-engagement-chart .no-data-message,
+html[data-theme="light"] .game-engagement-chart .no-data-message,
+html:not([data-theme]) .game-engagement-chart .no-data-message,
+body:not(.dark) .game-engagement-chart .no-data-message {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .game-engagement-chart .no-data-message p,
+.light .game-engagement-chart .no-data-message p,
+html[data-theme="light"] .game-engagement-chart .no-data-message p,
+html:not([data-theme]) .game-engagement-chart .no-data-message p,
+body:not(.dark) .game-engagement-chart .no-data-message p {
+  color: #6b7280 !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-engagement-chart {
+    padding: 16px;
+  }
+
+  .game-engagement-chart .chart-header h3 {
+    font-size: 16px;
+  }
+
+  .game-engagement-chart .chart-subtitle {
+    font-size: 12px;
+  }
+}

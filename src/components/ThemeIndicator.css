@@ -1,0 +1,109 @@
+.theme-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--content-bg);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.theme-indicator:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.theme-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-label {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.theme-label strong {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.theme-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+
+.theme-btn:hover {
+  background: var(--header-hover);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.theme-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.dark .theme-btn.active {
+  background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%);
+  box-shadow: 0 2px 4px rgba(129, 140, 248, 0.2);
+}
+
+.theme-btn.toggle {
+  background: var(--header-hover);
+  color: var(--text-primary);
+}
+
+.theme-btn.toggle:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dark .theme-btn.toggle:hover {
+  background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%);
+}
+
+.theme-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 640px) {
+  .theme-indicator {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  
+  .theme-label {
+    font-size: 0.875rem;
+  }
+  
+  .theme-controls {
+    gap: 0.75rem;
+  }
+}

@@ -1,0 +1,218 @@
+.data-table-card {
+  background: var(--content-bg);
+  backdrop-filter: blur(8px);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.data-table-card:hover {
+  box-shadow: var(--shadow-hover);
+  background: var(--content-bg-hover);
+}
+
+.data-table-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.data-table-container {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.data-table-th {
+  background: var(--table-header-bg);
+  padding: 0.5rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--table-border);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.data-table-th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.data-table-th.sortable:hover {
+  background: var(--table-header-hover);
+}
+
+.data-table-th-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.data-table-td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--table-border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.data-table-row:hover {
+  background: var(--table-row-hover);
+}
+
+.data-table-loading,
+.data-table-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-badge-active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #059669;
+}
+
+.status-badge-inactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.status-badge-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+/* Large desktop responsive adjustments */
+@media (min-width: 1200px) {
+  .data-table {
+    min-width: 100%;
+  }
+  
+  .data-table-td {
+    max-width: 250px;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .data-table-header {
+    padding: 0.875rem;
+  }
+  
+  .data-table-th,
+  .data-table-td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .data-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  
+  .data-table {
+    min-width: 500px;
+    width: 100%;
+  }
+  
+  .data-table-td {
+    max-width: 150px;
+  }
+  
+  /* Hide less important columns on mobile */
+  .data-table-th:nth-child(3),
+  .data-table-td:nth-child(3),
+  .data-table-th:nth-child(6),
+  .data-table-td:nth-child(6) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .data-table-header {
+    padding: 0.75rem;
+  }
+  
+  .data-table-title {
+    font-size: 1rem;
+  }
+  
+  .data-table-th,
+  .data-table-td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Show only essential columns on small mobile */
+  .data-table-th:nth-child(2),
+  .data-table-td:nth-child(2),
+  .data-table-th:nth-child(5),
+  .data-table-td:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .data-table-header {
+    padding: 0.625rem;
+  }
+  
+  .data-table-th,
+  .data-table-td {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Compact table layout for very small screens */
+  .data-table-th {
+    white-space: normal;
+    line-height: 1.2;
+  }
+  
+  .data-table-td {
+    white-space: normal;
+    line-height: 1.3;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
