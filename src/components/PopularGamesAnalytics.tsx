@@ -19,8 +19,7 @@ import {
   PlayCircle, 
   Award,
   Crown,
-  BarChart3,
-  RefreshCw
+  BarChart3
 } from 'lucide-react';
 import './PopularGamesAnalytics.css';
 
@@ -135,61 +134,20 @@ const PopularGamesAnalytics: React.FC = () => {
     );
   }
 
-  // Handle empty data response and prepare chart data
+  // Handle data response and prepare chart data
   const hasGamesData = popularGamesData?.data?.rankings && popularGamesData.data.rankings.length > 0;
-  const isEmpty = popularGamesData?.data?.summary?.total_games === 0;
   const topGames = hasGamesData ? popularGamesData.data.rankings.slice(0, 10) : [];
   
-  // Show empty state if no games data
-  if (isEmpty && !isLoading) {
-    return (
-      <div className={`popular-games-analytics ${isVisible ? 'visible' : ''}`}>
-        <div className="games-header">
-          <div className="header-content">
-            <h2>
-              <Trophy size={24} />
-              Popular Games Ranking
-            </h2>
-            <p className="header-subtitle">
-              No games data available for the current period
-            </p>
-          </div>
-        </div>
-        
-        <div className="empty-state">
-          <div className="empty-state-content">
-            <div className="empty-state-icon">
-              <Gamepad2 size={48} />
-            </div>
-            <h3>No Popular Games Data</h3>
-            <p>
-              There are currently no games with popularity data available.<br />
-              This could mean:
-            </p>
-            <ul>
-              <li>No games have been played during this period</li>
-              <li>Game data hasn't been synchronized yet</li>
-              <li>The selected time range has no activity</li>
-            </ul>
-            <button 
-              onClick={() => window.location.reload()}
-              className="retry-button"
-            >
-              <RefreshCw size={16} />
-              Refresh Data
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Create placeholder data for empty charts
+  const chartLabels = hasGamesData ? topGames.map((game: any) => game.name || game.game_name || 'Unknown Game') : ['No Games Available'];
+  const chartData = hasGamesData ? topGames.map((game: any) => game.plays || game.play_count || 0) : [0];
   
   const barChartData = {
-    labels: topGames.map((game: any) => game.name || game.game_name || 'Unknown Game'),
+    labels: chartLabels,
     datasets: [
       {
         label: 'Play Count',
-        data: topGames.map((game: any) => game.plays || game.play_count || 0),
+        data: chartData,
         backgroundColor: [
           'rgba(99, 102, 241, 0.8)',   // Indigo
           'rgba(168, 85, 247, 0.8)',   // Purple  
@@ -214,10 +172,10 @@ const PopularGamesAnalytics: React.FC = () => {
   };
 
   const doughnutChartData = {
-    labels: topGames.slice(0, 5).map((game: any) => game.name || game.game_name || 'Unknown Game'),
+    labels: hasGamesData ? topGames.slice(0, 5).map((game: any) => game.name || game.game_name || 'Unknown Game') : ['No Games Available'],
     datasets: [
       {
-        data: topGames.slice(0, 5).map((game: any) => game.plays || game.play_count || 0),
+        data: hasGamesData ? topGames.slice(0, 5).map((game: any) => game.plays || game.play_count || 0) : [1],
         backgroundColor: [
           'rgba(99, 102, 241, 0.8)',
           'rgba(168, 85, 247, 0.8)',
@@ -331,9 +289,9 @@ const PopularGamesAnalytics: React.FC = () => {
             Popular Games Ranking
           </h2>
           <p className="header-subtitle">
-            Game popularity metrics and player distribution
+            API Response: Total Games: {totalGames}, Total Plays: {totalPlays}, Rankings: {popularGamesData?.data?.rankings?.length || 0}
             {error && (
-              <span>⚠️ {typeof error === 'string' ? error : 'API Error'}</span>
+              <span style={{ color: '#ef4444', marginLeft: '10px' }}>⚠️ {typeof error === 'string' ? error : 'API Error'}</span>
             )}
           </p>
         </div>
@@ -403,18 +361,18 @@ const PopularGamesAnalytics: React.FC = () => {
             <div className="chart-subtitle">Play count ranking</div>
           </div>
           <div className="chart-wrapper" style={{ height: '400px' }}>
-            {hasGamesData ? (
-              <Bar data={barChartData} options={barChartOptions} />
-            ) : (
+            <Bar data={barChartData} options={barChartOptions} />
+            {!hasGamesData && (
               <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                height: '100%', 
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
                 color: '#6b7280',
-                fontSize: '16px'
+                fontSize: '14px',
+                textAlign: 'center'
               }}>
-                No games data available
+                No games data - Total Games: {totalGames}, Total Plays: {totalPlays}
               </div>
             )}
           </div>
@@ -427,18 +385,18 @@ const PopularGamesAnalytics: React.FC = () => {
             <div className="chart-subtitle">Play share percentage</div>
           </div>
           <div className="chart-wrapper" style={{ height: '400px' }}>
-            {hasGamesData ? (
-              <Doughnut data={doughnutChartData} options={doughnutOptions} />
-            ) : (
+            <Doughnut data={doughnutChartData} options={doughnutOptions} />
+            {!hasGamesData && (
               <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                height: '100%', 
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
                 color: '#6b7280',
-                fontSize: '16px'
+                fontSize: '14px',
+                textAlign: 'center'
               }}>
-                No games data available
+                No rankings data available
               </div>
             )}
           </div>
@@ -478,10 +436,38 @@ const PopularGamesAnalytics: React.FC = () => {
             </div>
           )) : (
             <div className="no-games-message">
-              <p>No games data available</p>
+              <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px', marginBottom: '20px' }}>
+                <h4 style={{ marginBottom: '10px', color: '#374151' }}>API Response Data:</h4>
+                <div style={{ fontSize: '14px', color: '#6b7280', fontFamily: 'monospace' }}>
+                  <div><strong>Summary:</strong></div>
+                  <ul style={{ marginLeft: '20px', listStyle: 'disc' }}>
+                    <li>Total Games: {totalGames}</li>
+                    <li>Total Plays: {totalPlays}</li>
+                    <li>Most Popular Game: {mostPopularGame || 'null'}</li>
+                  </ul>
+                  <div style={{ marginTop: '10px' }}><strong>Rankings:</strong> {popularGamesData?.data?.rankings?.length || 0} items (empty array)</div>
+                  <div><strong>Breakdown:</strong> {popularGamesData?.data?.breakdown?.length || 0} items (empty array)</div>
+                </div>
+              </div>
+              <p>No games in rankings to display</p>
             </div>
           )}
         </div>
+      </div>
+
+      {/* API Response Debug Section */}
+      <div className="api-response-debug" style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+        <h3 style={{ marginBottom: '15px', color: '#374151' }}>Raw API Response:</h3>
+        <pre style={{ 
+          backgroundColor: '#ffffff', 
+          padding: '15px', 
+          borderRadius: '6px', 
+          overflow: 'auto', 
+          fontSize: '12px',
+          border: '1px solid #e5e7eb'
+        }}>
+          {JSON.stringify(popularGamesData, null, 2)}
+        </pre>
       </div>
     </div>
   );

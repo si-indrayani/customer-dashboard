@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
-  Users, 
   Gamepad2, 
   Trophy, 
-  Clock, 
   Target, 
   BarChart3, 
   Calendar,
@@ -21,7 +19,7 @@ const Analytics: React.FC = () => {
     to: '2025-09-30'
   });
   const [selectedGame, setSelectedGame] = useState('');
-  const [tenantId] = useState('sports-fanzone-123');
+  const [tenantId] = useState('tenant_001');
 
   // Array of dummy game images to randomly assign
   const dummyImages = [
@@ -50,65 +48,41 @@ const Analytics: React.FC = () => {
 
   // Mock games data with images
   const availableGames = [
-    { id: 'premier-league-predictor', name: 'Premier League Predictor', image: getRandomImage('premier-league-predictor') },
-    { id: 'football-trivia-master', name: 'Football Trivia Master', image: getRandomImage('football-trivia-master') },
-    { id: 'sports-quiz-champion', name: 'Sports Quiz Champion', image: getRandomImage('sports-quiz-champion') }
+    { id: 'quiz_football_001', name: 'Football Quiz', image: getRandomImage('quiz_football_001') },
+    { id: 'quiz_basketball_001', name: 'Basketball Quiz', image: getRandomImage('quiz_basketball_001') },
+    { id: 'quiz_soccer_001', name: 'Soccer Quiz', image: getRandomImage('quiz_soccer_001') }
   ];
 
   const analyticsRoutes = [
-    {
-      path: '/analytics/game-performance',
-      name: 'Game Performance',
-      icon: Gamepad2,
-      description: 'Individual game metrics overview'
-    },
-    {
-      path: '/analytics/event-flow',
-      name: 'Event Flow',
-      icon: BarChart3,
-      description: 'Player journey and event analysis'
-    },
-    {
-      path: '/analytics/daily-active-users',
-      name: 'Daily Active Users',
-      icon: Users,
-      description: 'Track unique daily users'
-    },
-    {
-      path: '/analytics/game-plays',
-      name: 'Game Plays',
-      icon: Gamepad2,
-      description: 'Monitor game session starts'
-    },
-    {
-      path: '/analytics/completions',
-      name: 'Completions',
-      icon: Trophy,
-      description: 'Game completion rates'
-    },
-    {
-      path: '/analytics/session-time',
-      name: 'Session Time',
-      icon: Clock,
-      description: 'Average session duration'
-    },
-    {
-      path: '/analytics/accuracy',
-      name: 'Answer Accuracy',
-      icon: Target,
-      description: 'Player accuracy metrics'
-    },
-    {
-      path: '/analytics/events',
-      name: 'Events by Type',
-      icon: BarChart3,
-      description: 'Event distribution analysis'
-    },
     {
       path: '/analytics/traffic',
       name: 'Traffic Analytics',
       icon: TrendingUp,
       description: 'Website traffic and visitor metrics'
+    },
+    {
+      path: '/analytics/game-engagement',
+      name: 'Game Engagement',
+      icon: Gamepad2,
+      description: 'Game-specific engagement metrics'
+    },
+    {
+      path: '/analytics/performance',
+      name: 'Performance Analytics',
+      icon: Target,
+      description: 'Game performance and accuracy metrics'
+    },
+    {
+      path: '/analytics/popular-games',
+      name: 'Popular Games',
+      icon: Trophy,
+      description: 'Game popularity rankings and plays'
+    },
+    {
+      path: '/analytics/conversion-funnel',
+      name: 'Conversion Funnel',
+      icon: BarChart3,
+      description: 'User conversion and funnel analysis'
     }
   ];
 

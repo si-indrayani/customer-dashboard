@@ -48,7 +48,7 @@ const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange }) => {
     isLoading,
     refetch
   } = useGetTrafficAnalyticsQuery({
-    tenantId: 'gaming-company-123',
+    tenantId: 'tenant_001',
     dateFrom: dateRange.from,
     dateTo: dateRange.to
   });
@@ -80,7 +80,7 @@ const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange }) => {
   };
 
   // Use API data if available, otherwise use mock data
-  const trafficData = apiData || generateMockData(dateRange.from, dateRange.to);
+  const trafficData = apiData?.data ? apiData : generateMockData(dateRange.from, dateRange.to);
   
   // Log the data source for debugging
   React.useEffect(() => {
@@ -212,7 +212,7 @@ const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange }) => {
       },
       {
         label: 'Unique Visitors', 
-        data: trafficData.data.timeseries.map((item: any) => item.metadata?.unique ?? 0),
+        data: trafficData.data.timeseries.map((item: any) => item.metadata?.unique_visitors ?? item.metadata?.unique ?? 0),
         borderColor: '#f093fb',
         backgroundColor: 'rgba(240, 147, 251, 0.1)',
         borderWidth: 3,

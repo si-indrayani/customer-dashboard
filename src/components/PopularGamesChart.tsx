@@ -26,12 +26,17 @@ interface PopularGamesChartProps {
   tenantId: string;
   height?: string;
   limit?: number;
+  dateRange?: {
+    from: string;
+    to: string;
+  };
 }
 
 const PopularGamesChart: React.FC<PopularGamesChartProps> = ({ 
   tenantId,
   height = '300px',
-  limit = 5 
+  limit = 5,
+  dateRange
 }) => {
   const navigate = useNavigate();
   
@@ -41,7 +46,9 @@ const PopularGamesChart: React.FC<PopularGamesChartProps> = ({
     isLoading
   } = useGetPopularGamesRankingQuery({
     tenantId,
-    limit
+    limit,
+    dateFrom: dateRange?.from,
+    dateTo: dateRange?.to
   });
 
   const handleChartClick = () => {

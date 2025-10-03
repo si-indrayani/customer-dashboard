@@ -34,7 +34,7 @@ interface GameEngagementChartProps {
 
 const GameEngagementChart: React.FC<GameEngagementChartProps> = ({ 
   dateRange, 
-  gameId = 'word-puzzle-pro', 
+  gameId = 'quiz_football_001', 
   tenantId,
   height = '300px' 
 }) => {

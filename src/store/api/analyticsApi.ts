@@ -21,12 +21,24 @@ interface AnalyticsQueryParams {
 export const analyticsApi = createApi({
   reducerPath: 'analyticsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_EVENTS_API_BASE_URL || 'http://localhost:8080',
+    baseUrl: 'https://secure-lacewing-sweeping.ngrok-free.app',
     prepareHeaders: (headers) => {
       headers.set('Authorization', 'Basic YWRtaW46Z2FtaW5nMTIz');
       headers.set('Accept', 'application/json');
       headers.set('ngrok-skip-browser-warning', 'true');
+      headers.set('Content-Type', 'application/json');
       return headers;
+    },
+    fetchFn: async (input, init) => {
+      console.log('Making API request:', input, init);
+      try {
+        const response = await fetch(input, init);
+        console.log('API response:', response);
+        return response;
+      } catch (error) {
+        console.error('API request failed:', error);
+        throw error;
+      }
     },
   }),
   tagTypes: ['Analytics'],
@@ -87,81 +99,49 @@ export const analyticsApi = createApi({
 
     // Traffic Analytics
     getTrafficAnalytics: builder.query<any, { tenantId: string; dateFrom: string; dateTo: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => ({
-        url: `/metrics?type=traffic&tenant_id=${tenantId}&granularity=day&include_timeseries=true&date_from=${dateFrom}&date_to=${dateTo}`,
-        headers: {
-          'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        }
-      }),
+      query: ({ tenantId, dateFrom, dateTo }) => 
+        `metrics?tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true&type=traffic`,
       providesTags: ['Analytics'],
     }),
 
     // Game-Specific Engagement
     getGameEngagement: builder.query<any, { tenantId: string; gameId: string; dateFrom?: string; dateTo?: string }>({
       query: ({ tenantId, gameId, dateFrom, dateTo }) => {
-        let url = `/metrics?type=engagement&tenant_id=${tenantId}&game_id=${gameId}&granularity=day&include_timeseries=true`;
-        if (dateFrom) url += `&date_from=${dateFrom}`;
-        if (dateTo) url += `&date_to=${dateTo}`;
-        return {
-          url,
-          headers: {
-            'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
-          }
-        };
+        let url = `metrics?type=engagement&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&game_id=${gameId}&include_timeseries=true`;
+        return url;
       },
       providesTags: ['Analytics'],
     }),
 
     // Performance Analysis
     getPerformanceAnalytics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => {
-        let url = `/metrics?type=performance&tenant_id=${tenantId}&granularity=day&include_timeseries=true`;
-        if (dateFrom) url += `&date_from=${dateFrom}`;
-        if (dateTo) url += `&date_to=${dateTo}`;
-        return {
-          url,
-          headers: {
-            'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
-          }
-        };
-      },
+      query: ({ tenantId, dateFrom, dateTo }) => 
+        `metrics?tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true&type=performance`,
       providesTags: ['Analytics'],
     }),
 
     // Popular Games Ranking
-    getPopularGamesRanking: builder.query<any, { tenantId: string; limit?: number }>({
-      query: ({ tenantId, limit = 10 }) => ({
-        url: `/metrics?type=popularity&tenant_id=${tenantId}&limit=${limit}`,
-        headers: {
-          'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        }
-      }),
+    getPopularGamesRanking: builder.query<any, { tenantId: string; limit?: number; dateFrom?: string; dateTo?: string }>({
+      query: ({ tenantId, limit = 10, dateFrom, dateTo }) => {
+        let url = `metrics?type=popularity&tenant_id=${tenantId}&limit=${limit}`;
+        if (dateFrom) url += `&date_from=${dateFrom}`;
+        if (dateTo) url += `&date_to=${dateTo}`;
+        return url;
+      },
       providesTags: ['Analytics'],
     }),
 
     // Conversion Funnel Analysis
     getConversionFunnel: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => {
-        let url = `/metrics?type=conversion&tenant_id=${tenantId}&granularity=day&include_timeseries=true`;
-        if (dateFrom) url += `&date_from=${dateFrom}`;
-        if (dateTo) url += `&date_to=${dateTo}`;
-        return {
-          url,
-          headers: {
-            'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
-          }
-        };
-      },
+      query: ({ tenantId, dateFrom, dateTo }) => 
+        `metrics?type=conversion&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true`,
+      providesTags: ['Analytics'],
+    }),
+
+    // Reliability Metrics
+    getReliabilityMetrics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
+      query: ({ tenantId, dateFrom, dateTo }) => 
+        `metrics?type=reliability&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true`,
       providesTags: ['Analytics'],
     }),
 
@@ -184,5 +164,6 @@ export const {
   useGetPerformanceAnalyticsQuery,
   useGetPopularGamesRankingQuery,
   useGetConversionFunnelQuery,
+  useGetReliabilityMetricsQuery,
   useGetHealthCheckQuery,
 } = analyticsApi;

@@ -151,37 +151,9 @@ const ConversionFunnelAnalytics: React.FC = () => {
     );
   }
 
-  // Check if we have meaningful data
+  // Check if we have meaningful data (but still show UI regardless)
   const hasStepsData = steps && steps.length > 0 && totalUsers > 0;
   const hasTimeseriesData = timeseries && timeseries.length > 0;
-
-  // Show empty state if no meaningful data
-  if (!hasStepsData && !hasTimeseriesData) {
-    return (
-      <div className={`conversion-funnel-analytics empty-state ${isVisible ? 'visible' : ''}`}>
-        <div className="empty-state-container">
-          <div className="empty-state-content">
-            <div className="empty-state-icon">🔄</div>
-            <h3>No Conversion Activity Detected</h3>
-            <p>
-              Hub visits: {summary.hub_visits || 0} • Game starts: {summary.game_starts || 0} • Completions: {summary.game_completions || 0}
-            </p>
-            <div className="empty-state-actions">
-              <button onClick={handleRefresh} className="refresh-button">
-                <RefreshCw size={16} />
-                Refresh Data
-              </button>
-            </div>
-            <div className="empty-state-info">
-              <small>
-                Date range: {new Date(dateRange.from).toLocaleDateString()} - {new Date(dateRange.to).toLocaleDateString()}
-              </small>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Prepare funnel chart data
   const funnelChartData = {
@@ -373,9 +345,9 @@ const ConversionFunnelAnalytics: React.FC = () => {
             Conversion Funnel Analysis
           </h2>
           <p className="header-subtitle">
-            User conversion tracking and funnel optimization insights
+            API Response: Hub Visits: {summary.hub_visits || 0}, Game Starts: {summary.game_starts || 0}, Completions: {summary.game_completions || 0}, Timeseries: {timeseries.length}
             {error && (
-              <span>⚠️ {typeof error === 'string' ? error : 'API Error'}</span>
+              <span style={{ color: '#ef4444', marginLeft: '10px' }}>⚠️ {typeof error === 'string' ? error : 'API Error'}</span>
             )}
           </p>
         </div>
@@ -471,100 +443,165 @@ const ConversionFunnelAnalytics: React.FC = () => {
       {/* Charts Grid */}
       <div className="charts-grid">
         {/* Funnel Chart */}
-        {hasStepsData && (
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3>Funnel Steps Breakdown</h3>
-              <div className="chart-subtitle">User progression through each step</div>
-            </div>
-            <div className="chart-wrapper" style={{ height: '400px' }}>
-              <Bar data={funnelChartData} options={chartOptions} />
-            </div>
+        <div className="chart-card">
+          <div className="chart-header">
+            <h3>Funnel Steps Breakdown</h3>
+            <div className="chart-subtitle">User progression through each step</div>
           </div>
-        )}
+          <div className="chart-wrapper" style={{ height: '400px', position: 'relative' }}>
+            <Bar data={funnelChartData} options={chartOptions} />
+            {!hasStepsData && (
+              <div style={{ 
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: '#6b7280',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                No conversion data - All values are 0
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Timeseries Chart */}
-        {hasTimeseriesData && (
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3>Conversion Rate Trend</h3>
-              <div className="chart-subtitle">Daily conversion rate over time</div>
-            </div>
-            <div className="chart-wrapper" style={{ height: '400px' }}>
-              <Line data={timeseriesChartData} options={timeseriesOptions} />
-            </div>
+        <div className="chart-card">
+          <div className="chart-header">
+            <h3>Conversion Rate Trend</h3>
+            <div className="chart-subtitle">Daily conversion rate over time</div>
           </div>
-        )}
+          <div className="chart-wrapper" style={{ height: '400px', position: 'relative' }}>
+            {hasTimeseriesData ? (
+              <Line data={timeseriesChartData} options={timeseriesOptions} />
+            ) : (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100%', 
+                color: '#6b7280',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                No timeseries data - Empty array
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Drop-off Distribution */}
-        {hasStepsData && steps.length > 1 && (
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3>Drop-off Distribution</h3>
-              <div className="chart-subtitle">Where users leave the funnel</div>
-            </div>
-            <div className="chart-wrapper" style={{ height: '400px' }}>
-              <Doughnut data={dropOffChartData} options={doughnutOptions} />
-            </div>
+        <div className="chart-card">
+          <div className="chart-header">
+            <h3>Drop-off Distribution</h3>
+            <div className="chart-subtitle">Where users leave the funnel</div>
           </div>
-        )}
+          <div className="chart-wrapper" style={{ height: '400px', position: 'relative' }}>
+            {hasStepsData && steps.length > 1 ? (
+              <Doughnut data={dropOffChartData} options={doughnutOptions} />
+            ) : (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '100%', 
+                color: '#6b7280',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                No drop-off data available
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Funnel Steps Details */}
-      {hasStepsData && (
-        <div className="funnel-steps-container">
-          <div className="list-header">
-            <h3>Detailed Funnel Steps</h3>
-            <div className="list-subtitle">Step-by-step conversion breakdown</div>
-          </div>
-          <div className="funnel-steps">
-            {steps.map((step: any, index: number) => {
-              const users = step.users || step.user_count || 0;
-              const conversionFromPrevious = index > 0 && steps[index - 1] 
-                ? ((users / (steps[index - 1].users || steps[index - 1].user_count || 1)) * 100)
-                : 100;
-              const conversionFromStart = totalUsers > 0 ? ((users / totalUsers) * 100) : 0;
-              
-              return (
-                <div key={index} className="funnel-step">
-                  <div className="step-number">
-                    <span>{index + 1}</span>
-                  </div>
-                  <div className="step-info">
-                    <div className="step-name">
-                      {step.name || step.step_name || `Step ${index + 1}`}
-                    </div>
-                    <div className="step-stats">
-                      <Users size={14} />
-                      <span>{users.toLocaleString()} users</span>
-                      <span className="step-conversion">
-                        ({conversionFromStart.toFixed(1)}% of total)
-                      </span>
-                    </div>
-                  </div>
-                  <div className="step-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: `${conversionFromStart}%` }}
-                    />
-                    <div className="progress-text">
-                      {conversionFromStart.toFixed(1)}%
-                    </div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="step-arrow">
-                      <ArrowDown size={16} />
-                      <span className="drop-off-rate">
-                        {index > 0 ? `${(100 - conversionFromPrevious).toFixed(1)}% drop-off` : ''}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+      <div className="funnel-steps-container">
+        <div className="list-header">
+          <h3>Detailed Funnel Steps</h3>
+          <div className="list-subtitle">Step-by-step conversion breakdown</div>
         </div>
-      )}
+        <div className="funnel-steps">
+          {hasStepsData ? steps.map((step: any, index: number) => {
+            const users = step.users || step.user_count || 0;
+            const conversionFromPrevious = index > 0 && steps[index - 1] 
+              ? ((users / (steps[index - 1].users || steps[index - 1].user_count || 1)) * 100)
+              : 100;
+            const conversionFromStart = totalUsers > 0 ? ((users / totalUsers) * 100) : 0;
+            
+            return (
+              <div key={index} className="funnel-step">
+                <div className="step-number">
+                  <span>{index + 1}</span>
+                </div>
+                <div className="step-info">
+                  <div className="step-name">
+                    {step.name || step.step_name || `Step ${index + 1}`}
+                  </div>
+                  <div className="step-stats">
+                    <Users size={14} />
+                    <span>{users.toLocaleString()} users</span>
+                    <span className="step-conversion">
+                      ({conversionFromStart.toFixed(1)}% of total)
+                    </span>
+                  </div>
+                </div>
+                <div className="step-progress">
+                  <div 
+                    className="progress-bar"
+                    style={{ width: `${conversionFromStart}%` }}
+                  />
+                  <div className="progress-text">
+                    {conversionFromStart.toFixed(1)}%
+                  </div>
+                </div>
+                {index < steps.length - 1 && (
+                  <div className="step-arrow">
+                    <ArrowDown size={16} />
+                    <span className="drop-off-rate">
+                      {index > 0 ? `${(100 - conversionFromPrevious).toFixed(1)}% drop-off` : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          }) : (
+            <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px', marginBottom: '20px' }}>
+              <h4 style={{ marginBottom: '10px', color: '#374151' }}>Conversion Funnel API Response:</h4>
+              <div style={{ fontSize: '14px', color: '#6b7280', fontFamily: 'monospace' }}>
+                <div><strong>Summary:</strong></div>
+                <ul style={{ marginLeft: '20px', listStyle: 'disc' }}>
+                  <li>Hub Visits: {summary.hub_visits || 0}</li>
+                  <li>Game Starts: {summary.game_starts || 0}</li>
+                  <li>Game Completions: {summary.game_completions || 0}</li>
+                  <li>Visit-to-Play Rate: {((summary.visit_to_play_rate || 0) * 100).toFixed(1)}%</li>
+                  <li>Play-to-Completion Rate: {((summary.play_to_completion_rate || 0) * 100).toFixed(1)}%</li>
+                  <li>Overall Conversion Rate: {((summary.overall_conversion_rate || 0) * 100).toFixed(1)}%</li>
+                </ul>
+                <div style={{ marginTop: '10px' }}><strong>Timeseries:</strong> {timeseries.length} items (empty array)</div>
+              </div>
+              <p style={{ marginTop: '15px', color: '#6b7280' }}>No funnel progression data to display - all metrics are 0</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* API Response Debug Section */}
+      <div className="api-response-debug" style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+        <h3 style={{ marginBottom: '15px', color: '#374151' }}>Raw API Response:</h3>
+        <pre style={{ 
+          backgroundColor: '#ffffff', 
+          padding: '15px', 
+          borderRadius: '6px', 
+          overflow: 'auto', 
+          fontSize: '12px',
+          border: '1px solid #e5e7eb'
+        }}>
+          {JSON.stringify(funnelData, null, 2)}
+        </pre>
+      </div>
     </div>
   );
 };
