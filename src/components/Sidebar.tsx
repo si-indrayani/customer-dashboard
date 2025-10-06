@@ -2,12 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
-  Users, 
   Gamepad2, 
-  BarChart3, 
-  Activity,
-  DollarSign, 
-  Settings
+  BarChart3
 } from 'lucide-react';
 import AnimatedLogo from './AnimatedLogo';
 import './Sidebar.css';
@@ -24,12 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
-    { path: '/players', label: 'Players', icon: Users },
     { path: '/games', label: 'Games', icon: Gamepad2 },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/events', label: 'Events', icon: Activity },
-    { path: '/revenue', label: 'Revenue', icon: DollarSign },
-    { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {

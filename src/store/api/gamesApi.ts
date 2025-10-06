@@ -174,6 +174,20 @@ export const gamesApi = createApi({
         { type: 'Game', id: 'LIST' },
       ],
     }),
+
+    // Update client game title and description
+    updateClientGameInfo: builder.mutation<ClientGame, { id: number; title: string; description: string }>({
+      query: ({ id, title, description }) => ({
+        url: `/client-games/${id}`,
+        method: 'PUT',
+        body: { title, description },
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Game', id: `client-${id}` },
+        { type: 'Game', id: 'CLIENT_LIST' },
+        { type: 'Game', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
@@ -190,5 +204,6 @@ export const {
   useLazyGetGameQuery,
   useGetClientGamesQuery,
   useUpdateClientGameStatusMutation,
+  useUpdateClientGameInfoMutation,
   useLazyGetClientGamesQuery,
 } = gamesApi;

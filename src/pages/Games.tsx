@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Eye, Gamepad2, CheckCircle, X } from 'lucide-react';
+import { Eye, Gamepad2, CheckCircle, X, Edit3 } from 'lucide-react';
 import Table from '../components/Table';
 import StatsCard from '../components/StatsCard';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ToggleSwitch from '../components/ToggleSwitch';
+import GameEditModal from '../components/GameEditModal';
 
-import { useGetTenantsQuery, useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation } from '../store/api/gamesApi';
+import { useGetTenantsQuery, useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation, useUpdateClientGameInfoMutation } from '../store/api/gamesApi';
 import './Games.css';
 
 const Games: React.FC = () => {
@@ -15,6 +16,8 @@ const Games: React.FC = () => {
   const [showActivationModal, setShowActivationModal] = useState(false);
   const [gameToActivate, setGameToActivate] = useState<{ clientGameId: number; currentActive: boolean; title: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [gameToEdit, setGameToEdit] = useState<{ id: number; title: string; description: string } | null>(null);
   
   // Array of dummy game images to randomly assign
   const dummyImages = [
@@ -37,57 +40,9 @@ const Games: React.FC = () => {
     return dummyImages[index];
   };
   
-  // Mock data for development when API is not available (without hardcoded images)
-  const mockGames = [
-    {
-      id: 1,
-      title: "Space Explorer",
-      description: "Explore the galaxy in this space adventure",
-      gameType: "HOSTED_LINK" as const,
-      url: "https://example.com/space-explorer",
-      status: "ACTIVE" as const,
-      createdAt: "2024-01-15T10:00:00Z"
-    },
-    {
-      id: 2,
-      title: "Math Challenge",
-      description: "Test your math skills",
-      gameType: "UPLOADED_BUILD" as const,
-      url: "https://example.com/math-challenge",
-      status: "ACTIVE" as const,
-      createdAt: "2024-01-10T08:00:00Z"
-    },
-    {
-      id: 3,
-      title: "Word Puzzle",
-      description: "Solve challenging word puzzles",
-      gameType: "HOSTED_LINK" as const,
-      url: "https://example.com/word-puzzle",
-      status: "DEPRECATED" as const,
-      createdAt: "2024-01-05T12:00:00Z"
-    }
-  ];
 
-  const mockClientGames = [
-    {
-      id: 7,
-      gameId: 1,
-      tenantId: "tenant_1",
-      isActive: true,
-      game: mockGames[0],
-      createdAt: "2024-01-15T10:00:00Z",
-      updatedAt: "2024-01-16T14:35:00Z"
-    },
-    {
-      id: 8,
-      gameId: 2,
-      tenantId: "tenant_1",
-      isActive: false,
-      game: mockGames[1],
-      createdAt: "2024-01-10T08:00:00Z",
-      updatedAt: "2024-01-14T16:20:00Z"
-    }
-  ];
+
+
 
   // Use RTK Query hooks for games data and stats (with fallback to mock)
   // Get all tenants for dropdown
@@ -107,6 +62,9 @@ const Games: React.FC = () => {
   
   // Mutation for updating game status
   const [updateGame, { isLoading: isUpdatingGameStatus }] = useUpdateGameMutation();
+  
+  // Mutation for updating client game info (title and description)
+  const [updateClientGameInfo, { isLoading: isUpdatingGameInfo }] = useUpdateClientGameInfoMutation();
 
   // Use only client games data - no general games API call
   const clientGames = currentTenantId ? (apiClientGames?.length ? apiClientGames : []) : [];
@@ -187,12 +145,6 @@ const Games: React.FC = () => {
     setGameToActivate(null);
   };
 
-  // Handle game status toggle
-  const handleStatusToggleClick = (gameId: number, currentStatus: string, gameTitle: string) => {
-    setGameToToggle({ id: gameId, currentStatus, title: gameTitle });
-    setShowConfirmModal(true);
-  };
-
   const handleConfirmStatusToggle = async () => {
     if (!gameToToggle) return;
 
@@ -218,13 +170,62 @@ const Games: React.FC = () => {
     setGameToToggle(null);
   };
 
+  // Handle edit game info
+  const handleEditGameInfo = (clientGameId: number, currentTitle: string, currentDescription: string) => {
+    setGameToEdit({ 
+      id: clientGameId, 
+      title: currentTitle || '', 
+      description: currentDescription || '' 
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle save edit changes
+  const handleSaveEditChanges = async (data: { title: string; description: string }) => {
+    if (!gameToEdit) return;
+
+    try {
+      await updateClientGameInfo({
+        id: gameToEdit.id,
+        title: data.title,
+        description: data.description,
+      }).unwrap();
+
+      setToastMessage({
+        status: 'success',
+        message: `Game "${data.title}" has been updated successfully.`
+      });
+
+      setShowEditModal(false);
+      setGameToEdit(null);
+      
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => setToastMessage(null), 3000);
+    } catch (error) {
+      console.error('Failed to update game info:', error);
+      setToastMessage({
+        status: 'error',
+        message: `Failed to update game information. Please try again.`
+      });
+      
+      // Auto-hide toast after 5 seconds for errors
+      setTimeout(() => setToastMessage(null), 5000);
+    }
+  };
+
+  // Close edit modal
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setGameToEdit(null);
+  };
+
 
 
   // Compute table data from client games ONLY when tenant ID is provided
   const tableData = currentTenantId && clientGames && clientGames.length > 0 ? 
     clientGames.map(clientGame => ({
       id: clientGame.game.id,
-      title: clientGame.game.title,
+      title: (clientGame as any).title || clientGame.game.title,
       description: (clientGame as any).description || clientGame.game.description,
       gameType: clientGame.game.gameType,
       url: clientGame.game.url,
@@ -316,6 +317,22 @@ const Games: React.FC = () => {
         </span>
       ),
     },
+    {
+      key: 'actions',
+      title: 'Actions',
+      render: (_value: any, row: any) => (
+        <div className="actions-cell">
+          <button
+            className="edit-btn"
+            onClick={() => handleEditGameInfo(row.clientGameId, row.title, row.description)}
+            disabled={isUpdatingGameInfo}
+            title="Edit game information"
+          >
+            <Edit3 size={16} />
+          </button>
+        </div>
+      ),
+    },
   ];
 
   // Calculate visibility stats
@@ -373,26 +390,41 @@ const Games: React.FC = () => {
       <div className="games-table">
         <div className="table-header-with-input">
           <h3 className="table-title-custom">Game Library</h3>
-          <div className="tenant-input-inline">
-            <label htmlFor="tenant-select" className="tenant-label-inline">
-              Select Tenant:
-            </label>
-            <select
-              id="tenant-select"
-              value={currentTenantId}
-              onChange={(e) => setCurrentTenantId(e.target.value)}
-              className="tenant-input-field tenant-dropdown"
-              disabled={isLoadingTenants}
-            >
-              <option value="">
-                {isLoadingTenants ? 'Loading tenants...' : 'Select a tenant'}
-              </option>
-              {tenants?.map((tenant) => (
-                <option key={tenant.id} value={tenant.id.toString()}>
-                  {tenant.name}
+          <div className="header-controls">
+            <div className="tenant-input-inline">
+              <label htmlFor="tenant-select" className="tenant-label-inline">
+                Select Tenant:
+              </label>
+              <select
+                id="tenant-select"
+                value={currentTenantId}
+                onChange={(e) => setCurrentTenantId(e.target.value)}
+                className="tenant-input-field tenant-dropdown"
+                disabled={isLoadingTenants}
+              >
+                <option value="">
+                  {isLoadingTenants ? 'Loading tenants...' : 'Select a tenant'}
                 </option>
-              ))}
-            </select>
+                {tenants?.map((tenant) => (
+                  <option key={tenant.id} value={tenant.id.toString()}>
+                    {tenant.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {currentTenantId && (
+              <button
+                className="view-config-btn"
+                onClick={() => {
+                  const configUrl = `https://undallying-leisha-outbound.ngrok-free.dev/public/client/${currentTenantId}/data.json`;
+                  window.open(configUrl, '_blank', 'noopener,noreferrer');
+                }}
+                title={`View game configuration for tenant ${currentTenantId}`}
+              >
+                <Eye size={16} />
+                View Game Config
+              </button>
+            )}
           </div>
         </div>
         <Table
@@ -441,6 +473,16 @@ const Games: React.FC = () => {
         cancelText="Cancel"
         isLoading={isUpdatingStatus}
         type={gameToActivate?.currentActive ? 'warning' : 'info'}
+      />
+
+      {/* Game Edit Modal */}
+      <GameEditModal
+        isOpen={showEditModal}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveEditChanges}
+        gameTitle={gameToEdit?.title || ''}
+        gameDescription={gameToEdit?.description || ''}
+        isLoading={isUpdatingGameInfo}
       />
 
       {/* Toast Notification */}

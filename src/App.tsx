@@ -4,9 +4,7 @@ import { useTheme } from './contexts/ThemeContext'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
-import Players from './pages/Players'
 import Games from './pages/Games'
-import Events from './pages/Events'
 import AnalyticsOverview from './components/AnalyticsOverview'
 import AnalyticsWrapper from './components/AnalyticsWrapper'
 import TrafficAnalytics from './components/TrafficAnalytics'
@@ -60,9 +58,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/players" element={<Players />} />
               <Route path="/games" element={<Games />} />
-              <Route path="/events" element={<Events />} />
               
               {/* Analytics Routes */}
               <Route path="/analytics" element={<AnalyticsOverview />} />
@@ -81,10 +77,6 @@ function App() {
               <Route path="/analytics/conversion-funnel" element={<AnalyticsWrapper />}>
                 <Route index element={<ConversionFunnelAnalytics />} />
               </Route>
-              
-              {/* Placeholder routes */}
-              <Route path="/revenue" element={<div className="page-placeholder">Revenue page coming soon...</div>} />
-              <Route path="/settings" element={<div className="page-placeholder">Settings page coming soon...</div>} />
               
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />

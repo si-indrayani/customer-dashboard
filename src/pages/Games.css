@@ -171,6 +171,41 @@
   background: var(--content-bg);
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* View Game Config Button */
+.view-config-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  white-space: nowrap;
+}
+
+.view-config-btn:hover {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.view-config-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
+}
+
 .table-title-custom {
   font-size: 1.125rem;
   font-weight: 600;
@@ -774,6 +809,22 @@
     width: 100%;
   }
 
+  .header-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .tenant-input-inline {
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .view-config-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .tenant-selector-section {
     flex-direction: column;
     align-items: flex-start;
@@ -838,6 +889,12 @@
   
   .stat-change {
     font-size: 0.75rem;
+  }
+
+  .edit-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0.375rem;
   }
 }
 
@@ -1161,6 +1218,66 @@
 
 .dark .tenant-dropdown option:disabled {
   color: var(--text-secondary);
+}
+
+/* Dark mode styles for View Game Config button */
+.dark .view-config-btn {
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.dark .view-config-btn:hover {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+/* Actions column styles */
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 80px;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  min-width: 36px;
+  height: 36px;
+}
+
+.edit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.edit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Dark mode styles for edit button */
+.dark .edit-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.dark .edit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
 }
 
 /* Enhanced dropdown animations and effects */
