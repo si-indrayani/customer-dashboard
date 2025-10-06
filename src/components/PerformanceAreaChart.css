@@ -1,0 +1,102 @@
+/* Performance Area Chart Styles */
+.performance-area-chart {
+  background: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.performance-area-chart.clickable {
+  cursor: pointer;
+}
+
+.performance-area-chart.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.performance-area-chart .chart-header {
+  padding: 1.5rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--card-background);
+}
+
+.performance-area-chart .chart-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.performance-area-chart .chart-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.performance-area-chart .chart-container {
+  padding: 1rem;
+  position: relative;
+}
+
+.performance-area-chart .loading-spinner,
+.performance-area-chart .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+}
+
+.performance-area-chart .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dark theme */
+.dark .performance-area-chart {
+  background: var(--card-background-dark);
+  border-color: var(--border-color-dark);
+}
+
+.dark .performance-area-chart .chart-header {
+  background: var(--card-background-dark);
+  border-bottom-color: var(--border-color-dark);
+}
+
+.dark .performance-area-chart .chart-header h3 {
+  color: var(--text-primary-dark);
+}
+
+.dark .performance-area-chart .chart-subtitle {
+  color: var(--text-secondary-dark);
+}
+
+.dark .performance-area-chart:hover {
+  border-color: var(--primary-color);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .performance-area-chart .chart-header {
+    padding: 1rem 1rem 0.5rem;
+  }
+  
+  .performance-area-chart .chart-container {
+    padding: 0.75rem;
+  }
+}

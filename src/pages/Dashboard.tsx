@@ -3,10 +3,11 @@ import { Users, Gamepad2, DollarSign, Clock, TrendingUp, Target } from 'lucide-r
 // import { useTheme } from '../contexts/ThemeContext'; // Available for theme-based conditional logic
 import StatsCard from '../components/StatsCard';
 import TrafficChart from '../components/TrafficChart';
-import GameEngagementChart from '../components/GameEngagementChart';
-import PerformanceChart from '../components/PerformanceChart';
 import PopularGamesChart from '../components/PopularGamesChart';
 import ConversionFunnelChart from '../components/ConversionFunnelChart';
+import GameCompletionPieChart from '../components/GameCompletionPieChart';
+import UserEngagementDoughnutChart from '../components/UserEngagementDoughnutChart';
+import PerformanceAreaChart from '../components/PerformanceAreaChart';
 import { useNavigate } from 'react-router-dom';
 import {
   useGetTrafficAnalyticsQuery,
@@ -143,28 +144,38 @@ const Dashboard: React.FC = () => {
         <div className="charts-grid">
           <div className="chart-card" style={{ cursor: 'pointer' }} onClick={handleTrafficChartClick}>
             <div className="chart-card-header">
-              <h3 className="chart-card-title">Traffic Analytics</h3>
+              <h3 className="chart-card-title">Traffic Analytics (Line Chart)</h3>
             </div>
             <div className="chart-card-content">
               <TrafficChart dateRange={dateRange} />
             </div>
           </div>
-          <GameEngagementChart 
-            dateRange={dateRange} 
-            tenantId="tenant_001"
-            height="300px"
-          />
-          <PerformanceChart 
-            dateRange={dateRange} 
-            tenantId="tenant_001"
-            height="300px"
-          />
+          
           <PopularGamesChart 
             tenantId="tenant_001"
             height="300px"
-            limit={10}
+            limit={5}
             dateRange={dateRange}
           />
+          
+          <GameCompletionPieChart
+            tenantId="tenant_001"
+            height="300px"
+            dateRange={dateRange}
+          />
+          
+          <UserEngagementDoughnutChart
+            tenantId="tenant_001"
+            height="300px"
+            dateRange={dateRange}
+          />
+          
+          <PerformanceAreaChart
+            tenantId="tenant_001"
+            height="300px"
+            dateRange={dateRange}
+          />
+          
           <ConversionFunnelChart 
             tenantId="tenant_001"
             height="300px"
