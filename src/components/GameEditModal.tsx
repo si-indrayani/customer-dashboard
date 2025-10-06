@@ -113,7 +113,7 @@ const GameEditModal: React.FC<GameEditModalProps> = ({
                   className={`form-textarea ${description.trim() ? 'has-value' : ''}`}
                   placeholder="Provide additional details about the game..."
                   disabled={isLoading}
-                  rows={3}
+                  rows={2}
                   maxLength={500}
                 />
                 <div className="textarea-border"></div>
