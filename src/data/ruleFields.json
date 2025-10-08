@@ -1,0 +1,174 @@
+{
+  "fields": [
+    {
+      "id": "gameName",
+      "label": "Game Name",
+      "type": "text",
+      "datatype": "string",
+      "placeholder": "Enter game name",
+      "required": true
+    },
+    {
+      "id": "playerEmail",
+      "label": "Player Email",
+      "type": "email",
+      "datatype": "email",
+      "placeholder": "player@example.com",
+      "required": true
+    },
+    {
+      "id": "questionCount",
+      "label": "Question Count",
+      "type": "number",
+      "datatype": "integer",
+      "min": 1,
+      "max": 100,
+      "placeholder": "Enter number of questions",
+      "required": true
+    },
+    {
+      "id": "gameScore",
+      "label": "Minimum Score Required",
+      "type": "range",
+      "datatype": "number",
+      "min": 0,
+      "max": 1000,
+      "required": true
+    },
+    {
+      "id": "gameType",
+      "label": "Game Type",
+      "type": "select",
+      "datatype": "string",
+      "required": true,
+      "options": [
+        { "value": "quiz", "label": "Quiz Game" },
+        { "value": "puzzle", "label": "Puzzle Game" },
+        { "value": "action", "label": "Action Game" },
+        { "value": "strategy", "label": "Strategy Game" },
+        { "value": "arcade", "label": "Arcade Game" }
+      ]
+    },
+    {
+      "id": "difficulty",
+      "label": "Difficulty Level",
+      "type": "radio",
+      "datatype": "string",
+      "required": true,
+      "options": [
+        { "value": "beginner", "label": "Beginner" },
+        { "value": "easy", "label": "Easy" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "hard", "label": "Hard" },
+        { "value": "expert", "label": "Expert" }
+      ]
+    },
+    {
+      "id": "features",
+      "label": "Game Features",
+      "type": "checkbox",
+      "datatype": "array",
+      "required": false,
+      "options": [
+        { "value": "multiplayer", "label": "Multiplayer Support" },
+        { "value": "leaderboard", "label": "Global Leaderboard" },
+        { "value": "achievements", "label": "Achievement System" },
+        { "value": "powerups", "label": "Power-ups & Boosters" },
+        { "value": "chat", "label": "In-game Chat" },
+        { "value": "rewards", "label": "Reward System" }
+      ]
+    },
+    {
+      "id": "enableNotifications",
+      "label": "Enable Push Notifications",
+      "type": "checkbox",
+      "datatype": "boolean",
+      "required": false
+    },
+    {
+      "id": "gamePassword",
+      "label": "Game Access Password",
+      "type": "password",
+      "datatype": "string",
+      "placeholder": "Enter secure password",
+      "required": false
+    },
+    {
+      "id": "startDate",
+      "label": "Game Start Date",
+      "type": "date",
+      "datatype": "string",
+      "required": true
+    },
+    {
+      "id": "startTime",
+      "label": "Game Start Time",
+      "type": "time",
+      "datatype": "string",
+      "required": true
+    },
+    {
+      "id": "gameUrl",
+      "label": "Game URL",
+      "type": "text",
+      "datatype": "url",
+      "placeholder": "https://example.com/game",
+      "required": false
+    },
+    {
+      "id": "maxPlayers",
+      "label": "Maximum Players",
+      "type": "number",
+      "datatype": "integer",
+      "min": 1,
+      "max": 1000,
+      "placeholder": "Enter max players",
+      "required": true
+    },
+    {
+      "id": "gameCategory",
+      "label": "Game Category",
+      "type": "select",
+      "datatype": "string",
+      "required": true,
+      "options": [
+        { "value": "education", "label": "Educational" },
+        { "value": "entertainment", "label": "Entertainment" },
+        { "value": "sports", "label": "Sports" },
+        { "value": "adventure", "label": "Adventure" },
+        { "value": "simulation", "label": "Simulation" },
+        { "value": "rpg", "label": "Role Playing" }
+      ]
+    },
+    {
+      "id": "ageRating",
+      "label": "Age Rating",
+      "type": "radio",
+      "datatype": "string",
+      "required": true,
+      "options": [
+        { "value": "3+", "label": "Ages 3+" },
+        { "value": "7+", "label": "Ages 7+" },
+        { "value": "12+", "label": "Ages 12+" },
+        { "value": "17+", "label": "Ages 17+" },
+        { "value": "18+", "label": "Adults Only 18+" }
+      ]
+    },
+    {
+      "id": "description",
+      "label": "Game Rule Description",
+      "type": "textarea",
+      "datatype": "string",
+      "placeholder": "Describe the game rule in detail, including objectives, scoring system, and any special conditions...",
+      "required": true
+    },
+    {
+      "id": "additionalNotes",
+      "label": "Additional Notes",
+      "type": "textarea",
+      "datatype": "string",
+      "placeholder": "Any additional notes or instructions...",
+      "required": false
+    }
+  ]
+}

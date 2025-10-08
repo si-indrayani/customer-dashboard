@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Eye, Gamepad2, CheckCircle, X, Edit3 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, Gamepad2, CheckCircle, X, Edit3, Settings } from 'lucide-react';
 import Table from '../components/Table';
 import StatsCard from '../components/StatsCard';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -10,6 +11,7 @@ import { useGetTenantsQuery, useGetClientGamesQuery, useUpdateClientGameStatusMu
 import './Games.css';
 
 const Games: React.FC = () => {
+  const navigate = useNavigate();
   const [currentTenantId, setCurrentTenantId] = useState(''); // No default tenant, user must enter one
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [gameToToggle, setGameToToggle] = useState<{ id: number; currentStatus: string; title: string } | null>(null);
@@ -219,6 +221,11 @@ const Games: React.FC = () => {
     setGameToEdit(null);
   };
 
+  const handleCreateGameRule = (gameId: number, gameTitle: string) => {
+    // Navigate to rule creation page with game details as URL params
+    navigate(`/games/create-rule?gameId=${gameId}&gameTitle=${encodeURIComponent(gameTitle)}`);
+  };
+
 
 
   // Compute table data from client games ONLY when tenant ID is provided
@@ -329,6 +336,14 @@ const Games: React.FC = () => {
             title="Edit game information"
           >
             <Edit3 size={16} />
+          </button>
+          <button
+            className="rule-btn"
+            onClick={() => handleCreateGameRule(row.clientGameId, row.title)}
+            disabled={isUpdatingGameInfo}
+            title="Create game rule"
+          >
+            <Settings size={16} />
           </button>
         </div>
       ),

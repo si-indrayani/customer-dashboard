@@ -590,7 +590,6 @@ const ConversionFunnelAnalytics: React.FC = () => {
 
       {/* API Response Debug Section */}
       <div className="api-response-debug" style={{ marginTop: '30px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-        <h3 style={{ marginBottom: '15px', color: '#374151' }}>Raw API Response:</h3>
         <pre style={{ 
           backgroundColor: '#ffffff', 
           padding: '15px', 

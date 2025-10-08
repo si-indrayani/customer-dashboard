@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Games from './pages/Games'
+import RuleCreation from './pages/RuleCreation'
 import AnalyticsOverview from './components/AnalyticsOverview'
 import AnalyticsWrapper from './components/AnalyticsWrapper'
 import TrafficAnalytics from './components/TrafficAnalytics'
@@ -59,6 +60,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/games" element={<Games />} />
+              <Route path="/games/create-rule" element={<RuleCreation />} />
               
               {/* Analytics Routes */}
               <Route path="/analytics" element={<AnalyticsOverview />} />
