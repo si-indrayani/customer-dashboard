@@ -90,7 +90,7 @@ const GamesManagement: React.FC = () => {
         <h2>All Games</h2>
         <div style={{ display: 'grid', gap: '1rem' }}>
           {games.map((game) => (
-            <div key={game.id} style={{ 
+            <div key={game.gameId} style={{ 
               padding: '1rem', 
               border: '1px solid #e5e7eb', 
               borderRadius: '0.5rem',
@@ -131,7 +131,7 @@ const GamesManagement: React.FC = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(game.id)}
+                  onClick={() => handleDelete(Number(game.gameId))}
                   disabled={isDeleting}
                   style={{ 
                     padding: '0.5rem 1rem', 

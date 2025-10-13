@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Define the Game interface based on your API response
 export interface Game {
-  id: number;
+  gameId: string;
   title: string;
   description: string | null;
   gameType: 'HOSTED_LINK' | 'UPLOADED_BUILD';
@@ -13,7 +13,7 @@ export interface Game {
 
 // Define the Tenant interface for dropdown
 export interface Tenant {
-  id: number;
+  tenantId: string;
   name: string;
   createdAt: string;
 }
@@ -21,14 +21,14 @@ export interface Tenant {
 // Define the ClientGame interface for client-specific game configurations
 export interface ClientGame {
   id: number;
-  gameId: number;
-  tenantId: number;
+  gameId: string;
+  tenantId: string;
   title: string | null;
   description: string | null;
   isActive: boolean;
-  game: Game;
+  game?: Game;
   tenant?: {
-    id: number;
+    id: string;
     name: string;
   };
   createdAt: string;
@@ -39,9 +39,9 @@ export interface ClientGame {
 export const gamesApi = createApi({
   reducerPath: 'gamesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_GAMES_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
+    baseUrl: `${import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
     prepareHeaders: (headers) => {
-      const apiUrl = import.meta.env.VITE_GAMES_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
       console.log('Games API Base URL:', `${apiUrl}/api`);
       headers.set('accept', 'application/json');
       headers.set('Content-Type', 'application/json');
@@ -74,7 +74,7 @@ export const gamesApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'Game' as const, id })),
+              ...result.map(({ gameId }) => ({ type: 'Game' as const, id: gameId })),
               { type: 'Game', id: 'LIST' },
             ]
           : [{ type: 'Game', id: 'LIST' }],
@@ -143,7 +143,7 @@ export const gamesApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'Game' as const, id })),
+              ...result.map(({ gameId }) => ({ type: 'Game' as const, id: gameId })),
               { type: 'Game', id: 'LIST' },
             ]
           : [{ type: 'Game', id: 'LIST' }],

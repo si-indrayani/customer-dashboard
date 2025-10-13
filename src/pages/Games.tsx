@@ -36,9 +36,24 @@ const Games: React.FC = () => {
   ];
 
   // Function to get random image for a game (consistent per game ID)
-  const getRandomImage = (gameId: number) => {
-    // Use game ID to ensure consistent image assignment for the same game
-    const index = gameId % dummyImages.length;
+  const getRandomImage = (gameId: string | number) => {
+    // Convert string IDs to numbers using a simple hash
+    let numericId: number;
+    if (typeof gameId === 'string') {
+      // Simple hash function for string IDs
+      let hash = 0;
+      for (let i = 0; i < gameId.length; i++) {
+        const char = gameId.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+      }
+      numericId = Math.abs(hash);
+    } else {
+      numericId = gameId;
+    }
+
+    // Use numeric ID to ensure consistent image assignment for the same game
+    const index = numericId % dummyImages.length;
     return dummyImages[index];
   };
   
@@ -76,6 +91,7 @@ const Games: React.FC = () => {
   // Debug: Log the actual client games data
   console.log('=== GAMES DEBUG ===');
   console.log('Client Games data:', clientGames);
+  console.log('First client game structure:', clientGames?.[0]);
   console.log('Current Tenant ID:', currentTenantId);
   console.log('Is loading client games:', isLoadingClientGames);
   console.log('Client error:', clientGamesError);
@@ -229,21 +245,24 @@ const Games: React.FC = () => {
 
 
   // Compute table data from client games ONLY when tenant ID is provided
-  const tableData = currentTenantId && clientGames && clientGames.length > 0 ? 
+  const tableData = currentTenantId && clientGames && clientGames.length > 0 ?
     clientGames.map(clientGame => ({
-      id: clientGame.game.id,
-      title: (clientGame as any).title || clientGame.game.title,
-      description: (clientGame as any).description || clientGame.game.description,
-      gameType: clientGame.game.gameType,
-      url: clientGame.game.url,
-      status: clientGame.game.status,
+      id: clientGame.game?.gameId || clientGame.gameId,
+      title: (clientGame as any).title || clientGame.game?.title || 'Unknown Game',
+      description: (clientGame as any).description || clientGame.game?.description || '',
+      gameType: clientGame.game?.gameType || 'UNKNOWN',
+      url: clientGame.game?.url || '#',
+      status: clientGame.game?.status || 'UNKNOWN',
       isActive: clientGame.isActive,
       clientGameId: clientGame.id,
       tenantId: clientGame.tenantId,
       createdAt: clientGame.createdAt,
       tenantName: (clientGame as any).tenant?.name,
-      imageUrl: getRandomImage(clientGame.game.id)
+      imageUrl: getRandomImage(clientGame.game?.gameId || clientGame.gameId || 'default')
     })) : [];
+
+  // Debug: Log table data
+  console.log('Table data sample:', tableData?.[0]);
 
   const gameColumns = [
     {
@@ -421,7 +440,7 @@ const Games: React.FC = () => {
                   {isLoadingTenants ? 'Loading tenants...' : 'Select a tenant'}
                 </option>
                 {tenants?.map((tenant) => (
-                  <option key={tenant.id} value={tenant.id.toString()}>
+                  <option key={tenant.tenantId} value={tenant.tenantId}>
                     {tenant.name}
                   </option>
                 ))}

@@ -21,10 +21,10 @@ const DailyActiveUsers: React.FC = () => {
     error,
     isLoading
   } = useGetDailyActiveUsersQuery({
-    tenant_id: tenantId,
-    ...(selectedGame && { game_id: selectedGame }),
-    from: dateRange.from,
-    to: dateRange.to
+    tenantId: tenantId,
+    gameId: selectedGame || undefined,
+    dateFrom: dateRange.from,
+    dateTo: dateRange.to
   });
 
   // Transform data for Chart component

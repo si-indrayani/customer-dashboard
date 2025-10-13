@@ -12,16 +12,16 @@ interface MetricsResponse {
 }
 
 interface AnalyticsQueryParams {
-  tenant_id: string;
-  game_id?: string;
-  from?: string;
-  to?: string;
+  tenantId: string;
+  gameId?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 export const analyticsApi = createApi({
   reducerPath: 'analyticsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://secure-lacewing-sweeping.ngrok-free.app',
+    baseUrl: 'https://secure-lacewing-sweeping.ngrok-free.app/api',
     prepareHeaders: (headers) => {
       headers.set('Authorization', 'Basic YWRtaW46Z2FtaW5nMTIz');
       headers.set('Accept', 'application/json');
@@ -46,8 +46,14 @@ export const analyticsApi = createApi({
     // Daily Active Users
     getDailyActiveUsers: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/daily-active-users',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'daily-active-users',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
@@ -55,8 +61,14 @@ export const analyticsApi = createApi({
     // Game Plays
     getGamePlays: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/game-plays',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'game-plays',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
@@ -64,8 +76,14 @@ export const analyticsApi = createApi({
     // Game Completions
     getGameCompletions: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/game-completions',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'game-completions',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
@@ -73,8 +91,14 @@ export const analyticsApi = createApi({
     // Average Session Time
     getAverageSessionTime: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/average-session-time',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'average-session-time',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
@@ -82,8 +106,14 @@ export const analyticsApi = createApi({
     // Answer Accuracy
     getAnswerAccuracy: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/answer-accuracy',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'answer-accuracy',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
@@ -91,57 +121,111 @@ export const analyticsApi = createApi({
     // Events By Type
     getEventsByType: builder.query<MetricsResponse, AnalyticsQueryParams>({
       query: (params) => ({
-        url: '/metrics/events-by-type',
-        params,
+        url: '/metrics',
+        params: {
+          type: 'events-by-type',
+          tenantId: params.tenantId,
+          gameId: params.gameId,
+          dateFrom: params.dateFrom,
+          dateTo: params.dateTo,
+        },
       }),
       providesTags: ['Analytics'],
     }),
 
     // Traffic Analytics
     getTrafficAnalytics: builder.query<any, { tenantId: string; dateFrom: string; dateTo: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => 
-        `metrics?tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true&type=traffic`,
+      query: ({ tenantId, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'traffic',
+          tenantId,
+          granularity: 'day',
+          dateFrom,
+          dateTo,
+          includeTimeseries: true,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 
     // Game-Specific Engagement
     getGameEngagement: builder.query<any, { tenantId: string; gameId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, gameId, dateFrom, dateTo }) => {
-        let url = `metrics?type=engagement&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&game_id=${gameId}&include_timeseries=true`;
-        return url;
-      },
+      query: ({ tenantId, gameId, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'engagement',
+          tenantId,
+          gameId,
+          granularity: 'day',
+          dateFrom,
+          dateTo,
+          includeTimeseries: true,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 
     // Performance Analysis
     getPerformanceAnalytics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => 
-        `metrics?tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true&type=performance`,
+      query: ({ tenantId, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'performance',
+          tenantId,
+          granularity: 'day',
+          dateFrom,
+          dateTo,
+          includeTimeseries: true,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 
     // Popular Games Ranking
     getPopularGamesRanking: builder.query<any, { tenantId: string; limit?: number; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, limit = 10, dateFrom, dateTo }) => {
-        let url = `metrics?type=popularity&tenant_id=${tenantId}&limit=${limit}`;
-        if (dateFrom) url += `&date_from=${dateFrom}`;
-        if (dateTo) url += `&date_to=${dateTo}`;
-        return url;
-      },
+      query: ({ tenantId, limit = 10, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'popularity',
+          tenantId,
+          limit,
+          dateFrom,
+          dateTo,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 
     // Conversion Funnel Analysis
     getConversionFunnel: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => 
-        `metrics?type=conversion&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true`,
+      query: ({ tenantId, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'conversion',
+          tenantId,
+          granularity: 'day',
+          dateFrom,
+          dateTo,
+          includeTimeseries: true,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 
     // Reliability Metrics
     getReliabilityMetrics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => 
-        `metrics?type=reliability&tenant_id=${tenantId}&granularity=day&date_from=${dateFrom}&date_to=${dateTo}&include_timeseries=true`,
+      query: ({ tenantId, dateFrom, dateTo }) => ({
+        url: '/metrics',
+        params: {
+          type: 'reliability',
+          tenantId,
+          granularity: 'day',
+          dateFrom,
+          dateTo,
+          includeTimeseries: true,
+        },
+      }),
       providesTags: ['Analytics'],
     }),
 

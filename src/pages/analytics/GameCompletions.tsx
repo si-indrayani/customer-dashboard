@@ -21,10 +21,10 @@ const GameCompletions: React.FC = () => {
     error,
     isLoading
   } = useGetGameCompletionsQuery({
-    tenant_id: tenantId,
-    ...(selectedGame && { game_id: selectedGame }),
-    from: dateRange.from,
-    to: dateRange.to
+    tenantId: tenantId,
+    gameId: selectedGame || undefined,
+    dateFrom: dateRange.from,
+    dateTo: dateRange.to
   });
 
   const chartData = completionData?.series?.map(item => ({

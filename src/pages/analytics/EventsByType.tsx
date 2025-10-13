@@ -21,10 +21,10 @@ const EventsByType: React.FC = () => {
     error,
     isLoading
   } = useGetEventsByTypeQuery({
-    tenant_id: tenantId,
-    ...(selectedGame && { game_id: selectedGame }),
-    from: dateRange.from,
-    to: dateRange.to
+    tenantId: tenantId,
+    gameId: selectedGame || undefined,
+    dateFrom: dateRange.from,
+    dateTo: dateRange.to
   });
 
   const chartData = eventsData?.series?.map(item => ({
