@@ -5,15 +5,23 @@ import {
   ArrowLeft,
   RefreshCw
 } from 'lucide-react';
+import { useTenant } from '../contexts/TenantContext';
+import { useGetClientGamesQuery } from '../store/api/gamesApi';
 import './AnalyticsWrapper.css';
 
 const AnalyticsWrapper: React.FC = () => {
   const navigate = useNavigate();
+  const { selectedTenantId } = useTenant();
+  
   const [dateRange, setDateRange] = useState({
     from: '2025-09-01',
     to: '2025-09-30'
   });
-  const [tenantId] = useState('tenant_001');
+
+  // Also fetch games data to ensure it's cached when tenant changes
+  const { data: _gamesData } = useGetClientGamesQuery(selectedTenantId, {
+    skip: !selectedTenantId,
+  });
 
   const handleBackToAnalytics = () => {
     navigate('/analytics');
@@ -73,7 +81,7 @@ const AnalyticsWrapper: React.FC = () => {
 
       {/* Analytics Content */}
       <main className="analytics-wrapper-content">
-        <Outlet context={{ tenantId, dateRange }} />
+        <Outlet context={{ tenantId: selectedTenantId, dateRange }} />
       </main>
     </div>
   );

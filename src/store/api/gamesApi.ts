@@ -39,19 +39,17 @@ export interface ClientGame {
 export const gamesApi = createApi({
   reducerPath: 'gamesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
+    baseUrl: 'https://secure-lacewing-sweeping.ngrok-free.app/api',
     prepareHeaders: (headers) => {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-      console.log('Games API Base URL:', `${apiUrl}/api`);
-      headers.set('accept', 'application/json');
-      headers.set('Content-Type', 'application/json');
-      // Add ngrok bypass header to avoid browser warning
+      headers.set('Authorization', 'Basic YWRtaW46Z2FtaW5nMTIz');
+      headers.set('Accept', 'application/json');
       headers.set('ngrok-skip-browser-warning', 'true');
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
     responseHandler: async (response) => {
       const text = await response.text();
-      console.log('API Response:', text);
+      console.log('Games API Response:', text);
       try {
         return JSON.parse(text);
       } catch (error) {

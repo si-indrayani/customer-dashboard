@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Menu, ChevronLeft, Search, Bell, Sun, Moon } from 'lucide-react';
+import { Menu, ChevronLeft, Bell, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import TenantSelector from './TenantSelector';
 import './Header.css';
 
 interface HeaderProps {
@@ -58,20 +59,13 @@ const Header: React.FC<HeaderProps> = ({ onSidebarToggle, sidebarOpen }) => {
           {sidebarOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}
         </button>
         <h1 className="header-title">{title}</h1>
-        
-        {/* Search moved closer to heading */}
-        <div className="header-search">
-          <Search size={18} className="header-search-icon" />
-          <input 
-            type="text" 
-            placeholder="Search games, players..." 
-            className="header-search-input"
-          />
-        </div>
       </div>
       
       <div className="header-right">        
         <div className="header-actions">
+          {/* Tenant Selector */}
+          <TenantSelector />
+          
           {/* Dark mode toggle */}
           <button 
             className="header-action-btn header-theme-toggle"

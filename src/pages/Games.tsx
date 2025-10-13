@@ -6,13 +6,15 @@ import StatsCard from '../components/StatsCard';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ToggleSwitch from '../components/ToggleSwitch';
 import GameEditModal from '../components/GameEditModal';
+import { useTenant } from '../contexts/TenantContext';
 
-import { useGetTenantsQuery, useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation, useUpdateClientGameInfoMutation } from '../store/api/gamesApi';
+import { useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation, useUpdateClientGameInfoMutation } from '../store/api/gamesApi';
 import './Games.css';
 
 const Games: React.FC = () => {
   const navigate = useNavigate();
-  const [currentTenantId, setCurrentTenantId] = useState(''); // No default tenant, user must enter one
+  const { selectedTenantId } = useTenant();
+  
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [gameToToggle, setGameToToggle] = useState<{ id: number; currentStatus: string; title: string } | null>(null);
   const [showActivationModal, setShowActivationModal] = useState(false);
@@ -61,17 +63,13 @@ const Games: React.FC = () => {
 
 
 
-  // Use RTK Query hooks for games data and stats (with fallback to mock)
-  // Get all tenants for dropdown
-  const { data: tenants, isLoading: isLoadingTenants } = useGetTenantsQuery();
-  
   // Get client-specific games (only call when tenant is selected)
   const { 
     data: apiClientGames, 
     isLoading: isLoadingClientGames, 
     error: clientGamesError
-  } = useGetClientGamesQuery(currentTenantId, {
-    skip: !currentTenantId, // Skip the query when no tenant is selected
+  } = useGetClientGamesQuery(selectedTenantId, {
+    skip: !selectedTenantId, // Skip the query when no tenant is selected
   });
   
   // Mutation for updating client game status
@@ -84,15 +82,15 @@ const Games: React.FC = () => {
   const [updateClientGameInfo, { isLoading: isUpdatingGameInfo }] = useUpdateClientGameInfoMutation();
 
   // Use only client games data - no general games API call
-  const clientGames = currentTenantId ? (apiClientGames?.length ? apiClientGames : []) : [];
-  const totalGames = currentTenantId ? clientGames.length : 0;
-  const activeGames = currentTenantId ? clientGames.filter(cg => cg.isActive).length : 0;
+  const clientGames = selectedTenantId ? (apiClientGames?.length ? apiClientGames : []) : [];
+  const totalGames = selectedTenantId ? clientGames.length : 0;
+  const activeGames = selectedTenantId ? clientGames.filter(cg => cg.isActive).length : 0;
 
   // Debug: Log the actual client games data
   console.log('=== GAMES DEBUG ===');
   console.log('Client Games data:', clientGames);
   console.log('First client game structure:', clientGames?.[0]);
-  console.log('Current Tenant ID:', currentTenantId);
+  console.log('Current Tenant ID:', selectedTenantId);
   console.log('Is loading client games:', isLoadingClientGames);
   console.log('Client error:', clientGamesError);
   console.log('==================');
@@ -245,7 +243,7 @@ const Games: React.FC = () => {
 
 
   // Compute table data from client games ONLY when tenant ID is provided
-  const tableData = currentTenantId && clientGames && clientGames.length > 0 ?
+  const tableData = selectedTenantId && clientGames && clientGames.length > 0 ?
     clientGames.map(clientGame => ({
       id: clientGame.game?.gameId || clientGame.gameId,
       title: (clientGame as any).title || clientGame.game?.title || 'Unknown Game',
@@ -425,35 +423,14 @@ const Games: React.FC = () => {
         <div className="table-header-with-input">
           <h3 className="table-title-custom">Game Library</h3>
           <div className="header-controls">
-            <div className="tenant-input-inline">
-              <label htmlFor="tenant-select" className="tenant-label-inline">
-                Select Tenant:
-              </label>
-              <select
-                id="tenant-select"
-                value={currentTenantId}
-                onChange={(e) => setCurrentTenantId(e.target.value)}
-                className="tenant-input-field tenant-dropdown"
-                disabled={isLoadingTenants}
-              >
-                <option value="">
-                  {isLoadingTenants ? 'Loading tenants...' : 'Select a tenant'}
-                </option>
-                {tenants?.map((tenant) => (
-                  <option key={tenant.tenantId} value={tenant.tenantId}>
-                    {tenant.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {currentTenantId && (
+            {selectedTenantId && (
               <button
                 className="view-config-btn"
                 onClick={() => {
-                  const configUrl = `https://undallying-leisha-outbound.ngrok-free.dev/public/client/${currentTenantId}/data.json`;
+                  const configUrl = `https://undallying-leisha-outbound.ngrok-free.dev/public/client/${selectedTenantId}/data.json`;
                   window.open(configUrl, '_blank', 'noopener,noreferrer');
                 }}
-                title={`View game configuration for tenant ${currentTenantId}`}
+                title={`View game configuration for tenant ${selectedTenantId}`}
               >
                 <Eye size={16} />
                 View Game Config
@@ -466,9 +443,9 @@ const Games: React.FC = () => {
           data={tableData}
           loading={isLoadingClientGames}
           emptyMessage={
-            currentTenantId ? 
+            selectedTenantId ? 
               `No games found for selected tenant` : 
-              "Please select a tenant to view games"
+              "Please select a tenant from the header to view games"
           }
           defaultSortKey="title"
           defaultSortOrder="asc"

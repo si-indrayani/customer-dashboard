@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useTheme } from './contexts/ThemeContext'
+import { ThemeProvider, useTheme } from './contexts/ThemeContext'
+import { TenantProvider } from './contexts/TenantContext'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
@@ -42,51 +43,55 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <div className={`app ${isDarkMode ? 'dark' : ''}`}>
-        <Sidebar
-          isOpen={sidebarOpen}
-          onToggle={toggleSidebar}
-        />
-        
-        <div className={`main-content ${sidebarOpen ? 'main-content-shifted' : ''}`}>
-          <Header
-            onSidebarToggle={toggleSidebar}
-            sidebarOpen={sidebarOpen}
-          />
-          
-          <main className="content">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/games" element={<Games />} />
-              <Route path="/games/create-rule" element={<RuleCreation />} />
+    <ThemeProvider>
+      <TenantProvider>
+        <Router>
+          <div className={`app ${isDarkMode ? 'dark' : ''}`}>
+            <Sidebar
+              isOpen={sidebarOpen}
+              onToggle={toggleSidebar}
+            />
+            
+            <div className={`main-content ${sidebarOpen ? 'main-content-shifted' : ''}`}>
+              <Header
+                onSidebarToggle={toggleSidebar}
+                sidebarOpen={sidebarOpen}
+              />
               
-              {/* Analytics Routes */}
-              <Route path="/analytics" element={<AnalyticsOverview />} />
-              <Route path="/analytics/traffic" element={<AnalyticsWrapper />}>
-                <Route index element={<TrafficAnalytics />} />
-              </Route>
-              <Route path="/analytics/game-engagement" element={<AnalyticsWrapper />}>
-                <Route index element={<GameEngagement />} />
-              </Route>
-              <Route path="/analytics/performance" element={<AnalyticsWrapper />}>
-                <Route index element={<PerformanceAnalytics />} />
-              </Route>
-              <Route path="/analytics/popular-games" element={<AnalyticsWrapper />}>
-                <Route index element={<PopularGamesAnalytics />} />
-              </Route>
-              <Route path="/analytics/conversion-funnel" element={<AnalyticsWrapper />}>
-                <Route index element={<ConversionFunnelAnalytics />} />
-              </Route>
-              
-              {/* Catch all route */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </main>
-        </div>
-      </div>
-    </Router>
+              <main className="content">
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/games" element={<Games />} />
+                  <Route path="/games/create-rule" element={<RuleCreation />} />
+                  
+                  {/* Analytics Routes */}
+                  <Route path="/analytics" element={<AnalyticsOverview />} />
+                  <Route path="/analytics/traffic" element={<AnalyticsWrapper />}>
+                    <Route index element={<TrafficAnalytics />} />
+                  </Route>
+                  <Route path="/analytics/game-engagement" element={<AnalyticsWrapper />}>
+                    <Route index element={<GameEngagement />} />
+                  </Route>
+                  <Route path="/analytics/performance" element={<AnalyticsWrapper />}>
+                    <Route index element={<PerformanceAnalytics />} />
+                  </Route>
+                  <Route path="/analytics/popular-games" element={<AnalyticsWrapper />}>
+                    <Route index element={<PopularGamesAnalytics />} />
+                  </Route>
+                  <Route path="/analytics/conversion-funnel" element={<AnalyticsWrapper />}>
+                    <Route index element={<ConversionFunnelAnalytics />} />
+                  </Route>
+                  
+                  {/* Catch all route */}
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </main>
+            </div>
+          </div>
+        </Router>
+      </TenantProvider>
+    </ThemeProvider>
   )
 }
 

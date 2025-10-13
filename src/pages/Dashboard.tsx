@@ -1,6 +1,7 @@
 import React from 'react';
 import { Users, Gamepad2, DollarSign, Clock, TrendingUp, Target } from 'lucide-react';
 // import { useTheme } from '../contexts/ThemeContext'; // Available for theme-based conditional logic
+import { useTenant } from '../contexts/TenantContext';
 import StatsCard from '../components/StatsCard';
 import TrafficChart from '../components/TrafficChart';
 import PopularGamesChart from '../components/PopularGamesChart';
@@ -15,11 +16,15 @@ import {
   useGetPopularGamesRankingQuery,
   useGetConversionFunnelQuery
 } from '../store/api/analyticsApi';
+import { useGetClientGamesQuery } from '../store/api/gamesApi';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   // Theme context is available here if needed for conditional rendering
   // const { isDarkMode, toggleDarkMode, setDarkMode } = useTheme();
+  
+  // Get selected tenant from global context
+  const { selectedTenantId } = useTenant();
   
   // Fixed date range for analytics
   const dateRange = {
@@ -31,28 +36,33 @@ const Dashboard: React.FC = () => {
 
   // Fetch API data for stats cards
   const { data: trafficData } = useGetTrafficAnalyticsQuery({
-    tenantId: 'tenant_001',
+    tenantId: selectedTenantId,
     dateFrom: dateRange.from,
     dateTo: dateRange.to
   });
 
   const { data: performanceData } = useGetPerformanceAnalyticsQuery({
-    tenantId: 'tenant_001',
+    tenantId: selectedTenantId,
     dateFrom: dateRange.from,
     dateTo: dateRange.to
   });
 
   const { data: popularGamesData } = useGetPopularGamesRankingQuery({
-    tenantId: 'tenant_001',
+    tenantId: selectedTenantId,
     dateFrom: dateRange.from,
     dateTo: dateRange.to,
     limit: 10
   });
 
   const { data: conversionData } = useGetConversionFunnelQuery({
-    tenantId: 'tenant_001',
+    tenantId: selectedTenantId,
     dateFrom: dateRange.from,
     dateTo: dateRange.to
+  });
+
+  // Also fetch games data to ensure it's cached when tenant changes
+  const { data: _gamesData } = useGetClientGamesQuery(selectedTenantId, {
+    skip: !selectedTenantId,
   });
 
   const handleTrafficChartClick = () => {
@@ -152,32 +162,32 @@ const Dashboard: React.FC = () => {
           </div>
           
           <PopularGamesChart 
-            tenantId="tenant_001"
+            tenantId={selectedTenantId}
             height="300px"
             limit={5}
             dateRange={dateRange}
           />
           
           <GameCompletionPieChart
-            tenantId="tenant_001"
+            tenantId={selectedTenantId}
             height="300px"
             dateRange={dateRange}
           />
           
           <UserEngagementDoughnutChart
-            tenantId="tenant_001"
+            tenantId={selectedTenantId}
             height="300px"
             dateRange={dateRange}
           />
           
           <PerformanceAreaChart
-            tenantId="tenant_001"
+            tenantId={selectedTenantId}
             height="300px"
             dateRange={dateRange}
           />
           
           <ConversionFunnelChart 
-            tenantId="tenant_001"
+            tenantId={selectedTenantId}
             height="300px"
             dateRange={dateRange}
           />
