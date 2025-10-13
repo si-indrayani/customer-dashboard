@@ -14,7 +14,7 @@ interface AnalyticsContext {
 }
 
 const GamePerformance: React.FC = () => {
-  const { tenantId, dateRange, selectedGame, availableGames, getRandomImage } = useOutletContext<AnalyticsContext>();
+  const { tenantId: _tenantId, dateRange: _dateRange, selectedGame, availableGames, getRandomImage } = useOutletContext<AnalyticsContext>();
 
   // Mock comprehensive gaming analytics data based on your event structure
   const gamePerformanceData = [
@@ -150,14 +150,8 @@ const GamePerformance: React.FC = () => {
     errorCount: filteredData.reduce((sum, game) => sum + game.errorCount, 0)
   };
 
-  const overallCompletionRate = totals.totalPlays > 0 ? 
-    ((totals.completions / totals.totalPlays) * 100).toFixed(1) : '0';
-
   const overallAnswerAccuracy = totals.questionsAttempted > 0 ? 
     ((totals.questionsCorrect / totals.questionsAttempted) * 100).toFixed(1) : '0';
-
-  const overallHubConversion = totals.hubEnters > 0 ? 
-    ((totals.totalPlays / totals.hubEnters) * 100).toFixed(1) : '0';
 
   const gameColumns = [
     {

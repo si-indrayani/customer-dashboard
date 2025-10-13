@@ -24,18 +24,6 @@ ChartJS.register(
   Filler
 );
 
-interface TrafficData {
-  data: {
-    timeseries: Array<{
-      timestamp: string;
-      value: number;
-      metadata: {
-        unique: number;
-      };
-    }>;
-  };
-}
-
 interface TrafficChartProps {
   dateRange: { from: string; to: string };
 }
@@ -45,8 +33,7 @@ const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange }) => {
   const {
     data: apiData,
     error,
-    isLoading,
-    refetch
+    isLoading
   } = useGetTrafficAnalyticsQuery({
     tenantId: 'tenant_001',
     dateFrom: dateRange.from,

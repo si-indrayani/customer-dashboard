@@ -6,7 +6,7 @@ import './GameForm.css';
 interface GameFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
-  initialData?: Partial<Game>;
+  initialData?: Partial<Game> & { id?: number };
   mode?: 'create' | 'edit';
 }
 

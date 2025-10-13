@@ -1,6 +1,6 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { Activity, ArrowRight, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Activity, ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import Table from '../../components/Table';
 import StatsCard from '../../components/StatsCard';
 import ChartCard from '../../components/ChartCard';
@@ -15,7 +15,7 @@ interface AnalyticsContext {
 }
 
 const EventFlow: React.FC = () => {
-  const { tenantId, dateRange, selectedGame, availableGames, getRandomImage } = useOutletContext<AnalyticsContext>();
+  const { tenantId: _tenantId, dateRange: _dateRange, selectedGame, availableGames: _availableGames, getRandomImage } = useOutletContext<AnalyticsContext>();
 
   // Mock event flow data based on your event structure
   const eventFlowData = [

@@ -16,13 +16,10 @@ import {
 } from 'chart.js';
 import { 
   Gamepad2, 
-  Users, 
   Clock, 
   Target, 
-  TrendingUp, 
   Play, 
   CheckCircle, 
-  Award,
   BarChart3
 } from 'lucide-react';
 import './GameEngagement.css';
@@ -129,7 +126,7 @@ const GameEngagement: React.FC = () => {
           color: '#374151',
           font: {
             size: 14,
-            weight: 'normal',
+            weight: 'normal' as const,
           },
         },
       },
