@@ -33,6 +33,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
 
   // Set selected tenant ID with localStorage persistence
   const setSelectedTenantId = (tenantId: string) => {
+    console.log('Setting selectedTenantId:', tenantId);
     setSelectedTenantIdState(tenantId);
     localStorage.setItem('selectedTenantId', tenantId);
   };

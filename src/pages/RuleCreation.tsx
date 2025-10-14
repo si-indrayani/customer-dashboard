@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Save, Settings } from 'lucide-react';
+import { useTenant } from '../contexts/TenantContext';
 import ruleFieldsConfig from '../data/ruleFields.json';
 import './RuleCreation.css';
 
@@ -19,7 +20,13 @@ interface RuleField {
 const RuleCreation: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { selectedTenantId: contextTenantId } = useTenant();
+  
   const gameTitle = searchParams.get('gameTitle') || 'Unknown Game';
+  const gameId = searchParams.get('gameId');
+  const tenantId = searchParams.get('tenantId') || contextTenantId;
+
+  console.log('RuleCreation params:', { gameTitle, gameId, tenantId, contextTenantId, searchParams: Object.fromEntries(searchParams.entries()) });
 
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -152,10 +159,49 @@ const RuleCreation: React.FC = () => {
           }
         });
 
-        // TODO: Submit to API
+        // Keep existing JSON file functionality
         console.log('Rule data for game:', gameTitle, processedData);
         
-        // Simulate API call
+                // Make API call to update game rules
+        if (tenantId && gameId && tenantId !== 'undefined' && gameId !== 'undefined' && tenantId.trim() !== '' && gameId.trim() !== '') {
+          console.log('Making API call with:', { tenantId, gameId, processedData });
+          
+          // Ensure tenantId has the correct format
+          const formattedTenantId = tenantId.startsWith('tenant-') ? tenantId : `tenant-${tenantId}`;
+          
+          try {
+            const apiUrl = `https://secure-lacewing-sweeping.ngrok-free.app/api/client-games/${formattedTenantId}/game-${gameId}`;
+            console.log('API URL:', apiUrl);
+            const response = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
+                'ngrok-skip-browser-warning': 'true'
+              },
+              body: JSON.stringify({
+                tenantGameConfig: {
+                  rules: processedData
+                }
+              })
+            });
+
+            console.log('API response status:', response.status);
+            if (!response.ok) {
+              throw new Error(`API call failed: ${response.status}`);
+            }
+
+            const apiResult = await response.json();
+            console.log('API call successful:', apiResult);
+          } catch (apiError) {
+            console.error('API call failed:', apiError);
+            // Continue with the flow even if API call fails
+          }
+        } else {
+          console.log('Missing tenantId or gameId:', { tenantId, gameId });
+        }
+        
+        // Simulate API call delay (keep existing behavior)
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Navigate back to games page with success message

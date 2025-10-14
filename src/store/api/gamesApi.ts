@@ -160,11 +160,11 @@ export const gamesApi = createApi({
     }),
 
     // Update client game active status (Show/Hide game for tenant)
-    updateClientGameStatus: builder.mutation<ClientGame, { id: number; isActive: boolean }>({
-      query: ({ id, isActive }) => ({
-        url: `/client-games/${id}`,
+    updateClientGameStatus: builder.mutation<ClientGame, { id: number; tenantId: string; gameId: string; isActive: boolean }>({
+      query: ({ id, tenantId, gameId, isActive }) => ({
+        url: `/client-games/${tenantId}/${gameId}`,
         method: 'PUT',
-        body: { isActive },
+        body: { tenantId,  isActive },
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: 'Game', id: `client-${id}` },
@@ -174,9 +174,9 @@ export const gamesApi = createApi({
     }),
 
     // Update client game title and description
-    updateClientGameInfo: builder.mutation<ClientGame, { id: number; title: string; description: string }>({
-      query: ({ id, title, description }) => ({
-        url: `/client-games/${id}`,
+    updateClientGameInfo: builder.mutation<ClientGame, { id: number; tenantId: string; gameId: string; title: string; description: string }>({
+      query: ({ id, tenantId, gameId, title, description }) => ({
+        url: `/client-games/${tenantId}/${gameId}`,
         method: 'PUT',
         body: { title, description },
       }),

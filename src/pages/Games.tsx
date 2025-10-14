@@ -107,9 +107,20 @@ const Games: React.FC = () => {
 
     try {
       if (apiClientGames?.length) {
+        // Find the game data to get tenantId and gameId
+        const gameData = tableData.find(row => row.clientGameId === gameToActivate.clientGameId);
+        
+        if (!gameData) {
+          console.error('Game data not found for activation');
+          return;
+        }
+        console.log(gameData)
+
         // Use real API if available
         await updateClientGameStatus({
           id: gameToActivate.clientGameId,
+          tenantId: gameData.tenantId,
+          gameId: gameData.id, // This is the game UUID
           isActive: !gameToActivate.currentActive,
         }).unwrap();
         console.log('Game visibility updated successfully');
@@ -201,8 +212,18 @@ const Games: React.FC = () => {
     if (!gameToEdit) return;
 
     try {
+      // Find the game data to get tenantId and gameId
+      const gameData = tableData.find(row => row.clientGameId === gameToEdit.id);
+      
+      if (!gameData) {
+        console.error('Game data not found for edit');
+        return;
+      }
+
       await updateClientGameInfo({
         id: gameToEdit.id,
+        tenantId: gameData.tenantId,
+        gameId: gameData.id, // This is the game UUID
         title: data.title,
         description: data.description,
       }).unwrap();
@@ -237,7 +258,29 @@ const Games: React.FC = () => {
 
   const handleCreateGameRule = (gameId: number, gameTitle: string) => {
     // Navigate to rule creation page with game details as URL params
-    navigate(`/games/create-rule?gameId=${gameId}&gameTitle=${encodeURIComponent(gameTitle)}`);
+    const tenantId = selectedTenantId; // Get current tenant ID
+    console.log('Creating rule for game:', { gameId, gameTitle, tenantId, selectedTenantId });
+
+    if (!tenantId || tenantId === 'undefined' || tenantId === '') {
+      console.error('No valid tenant selected, cannot create rule. Current tenantId:', tenantId);
+      alert('Please select a tenant first before creating game rules.');
+      return;
+    }
+
+    // Find the game UUID from the table data
+    const gameData = tableData.find(row => row.clientGameId === gameId);
+    const gameUuid = gameData?.id; // This is the game UUID without prefix
+    console.log('Game data found:', gameData, 'gameUuid:', gameUuid);
+
+    if (!gameUuid) {
+      console.error('Game UUID not found for gameId:', gameId);
+      alert('Game data not found. Please try again.');
+      return;
+    }
+
+    const url = `/games/create-rule?gameId=${gameUuid}&gameTitle=${encodeURIComponent(gameTitle)}&tenantId=${encodeURIComponent(tenantId)}`;
+    console.log('Navigating to:', url);
+    navigate(url);
   };
 
 
