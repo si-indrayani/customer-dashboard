@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Gamepad2, CheckCircle, X, Edit3, Settings } from 'lucide-react';
+import { Eye, Gamepad2, CheckCircle, X, Edit3, Settings, Upload } from 'lucide-react';
 import Table from '../components/Table';
 import StatsCard from '../components/StatsCard';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -8,7 +8,7 @@ import ToggleSwitch from '../components/ToggleSwitch';
 import GameEditModal from '../components/GameEditModal';
 import { useTenant } from '../contexts/TenantContext';
 
-import { useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation, useUpdateClientGameInfoMutation } from '../store/api/gamesApi';
+import { useGetClientGamesQuery, useUpdateClientGameStatusMutation, useUpdateGameMutation, useUpdateClientGameInfoMutation, usePublishClientGamesMutation } from '../store/api/gamesApi';
 import './Games.css';
 
 const Games: React.FC = () => {
@@ -80,6 +80,9 @@ const Games: React.FC = () => {
   
   // Mutation for updating client game info (title and description)
   const [updateClientGameInfo, { isLoading: isUpdatingGameInfo }] = useUpdateClientGameInfoMutation();
+
+  // Mutation for publishing client games configuration
+  const [publishClientGames, { isLoading: isPublishing }] = usePublishClientGamesMutation();
 
   // Use only client games data - no general games API call
   const clientGames = selectedTenantId ? (apiClientGames?.length ? apiClientGames : []) : [];
@@ -467,14 +470,30 @@ const Games: React.FC = () => {
             {selectedTenantId && (
               <button
                 className="view-config-btn"
-                onClick={() => {
-                  const configUrl = `https://undallying-leisha-outbound.ngrok-free.dev/public/client/${selectedTenantId}/data.json`;
-                  window.open(configUrl, '_blank', 'noopener,noreferrer');
+                onClick={async () => {
+                  try {
+                    await publishClientGames(selectedTenantId).unwrap();
+
+                    setToastMessage({
+                      status: 'success',
+                      message: `Game configuration published successfully for tenant ${selectedTenantId}.`
+                    });
+                  } catch (error) {
+                    console.error('Failed to publish game configuration:', error);
+                    setToastMessage({
+                      status: 'error',
+                      message: `Failed to publish game configuration. Please try again.`
+                    });
+                  }
+
+                  // Auto-hide toast after 3 seconds for success, 5 seconds for error
+                  setTimeout(() => setToastMessage(null), 3000);
                 }}
-                title={`View game configuration for tenant ${selectedTenantId}`}
+                disabled={isPublishing}
+                title={`Publish game configuration for tenant ${selectedTenantId}`}
               >
-                <Eye size={16} />
-                View Game Config
+                <Upload size={16} />
+                {isPublishing ? 'Publishing...' : 'Publish'}
               </button>
             )}
           </div>

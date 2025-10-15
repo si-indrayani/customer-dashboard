@@ -186,6 +186,16 @@ export const gamesApi = createApi({
         { type: 'Game', id: 'LIST' },
       ],
     }),
+
+    // Publish client game configuration for a tenant
+    publishClientGames: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (tenantId) => ({
+        url: `/client-games/${tenantId}/publish`,
+        method: 'POST',
+        body: {},
+      }),
+      invalidatesTags: [{ type: 'Game', id: 'CLIENT_LIST' }],
+    }),
   }),
 });
 
@@ -203,5 +213,6 @@ export const {
   useGetClientGamesQuery,
   useUpdateClientGameStatusMutation,
   useUpdateClientGameInfoMutation,
+  usePublishClientGamesMutation,
   useLazyGetClientGamesQuery,
 } = gamesApi;

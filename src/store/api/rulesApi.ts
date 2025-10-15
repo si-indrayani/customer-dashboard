@@ -78,6 +78,7 @@ export const rulesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${ import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
     prepareHeaders: (headers) => {
+      headers.set('Authorization', 'Basic YWRtaW46Z2FtaW5nMTIz');
       headers.set('accept', 'application/json');
       headers.set('Content-Type', 'application/json');
       // Add ngrok bypass header to avoid browser warning
