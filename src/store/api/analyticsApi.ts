@@ -51,8 +51,8 @@ export const analyticsApi = createApi({
           type: 'daily-active-users',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -66,8 +66,8 @@ export const analyticsApi = createApi({
           type: 'game-plays',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -81,8 +81,8 @@ export const analyticsApi = createApi({
           type: 'game-completions',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -96,8 +96,8 @@ export const analyticsApi = createApi({
           type: 'average-session-time',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -111,8 +111,8 @@ export const analyticsApi = createApi({
           type: 'answer-accuracy',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -126,8 +126,8 @@ export const analyticsApi = createApi({
           type: 'events-by-type',
           tenantId: params.tenantId,
           gameId: params.gameId,
-          dateFrom: params.dateFrom,
-          dateTo: params.dateTo,
+          // dateFrom: params.dateFrom,
+          // dateTo: params.dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -135,14 +135,14 @@ export const analyticsApi = createApi({
 
     // Traffic Analytics
     getTrafficAnalytics: builder.query<any, { tenantId: string; dateFrom: string; dateTo: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => ({
+      query: ({ tenantId }) => ({
         url: '/metrics',
         params: {
           type: 'traffic',
           tenantId,
           granularity: 'day',
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
           includeTimeseries: true,
         },
       }),
@@ -151,15 +151,15 @@ export const analyticsApi = createApi({
 
     // Game-Specific Engagement
     getGameEngagement: builder.query<any, { tenantId: string; gameId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, gameId, dateFrom, dateTo }) => ({
+      query: ({ tenantId, gameId }) => ({
         url: '/metrics',
         params: {
           type: 'engagement',
           tenantId,
           gameId,
           granularity: 'day',
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
           includeTimeseries: true,
         },
       }),
@@ -168,14 +168,14 @@ export const analyticsApi = createApi({
 
     // Performance Analysis
     getPerformanceAnalytics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => ({
+      query: ({ tenantId }) => ({
         url: '/metrics',
         params: {
           type: 'performance',
           tenantId,
           granularity: 'day',
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
           includeTimeseries: true,
         },
       }),
@@ -184,14 +184,14 @@ export const analyticsApi = createApi({
 
     // Popular Games Ranking
     getPopularGamesRanking: builder.query<any, { tenantId: string; limit?: number; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, limit = 10, dateFrom, dateTo }) => ({
+      query: ({ tenantId, limit = 10 }) => ({
         url: '/metrics',
         params: {
           type: 'popularity',
           tenantId,
           limit,
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
         },
       }),
       providesTags: ['Analytics'],
@@ -199,14 +199,14 @@ export const analyticsApi = createApi({
 
     // Conversion Funnel Analysis
     getConversionFunnel: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => ({
+      query: ({ tenantId }) => ({
         url: '/metrics',
         params: {
           type: 'conversion',
           tenantId,
           granularity: 'day',
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
           includeTimeseries: true,
         },
       }),
@@ -215,14 +215,14 @@ export const analyticsApi = createApi({
 
     // Reliability Metrics
     getReliabilityMetrics: builder.query<any, { tenantId: string; dateFrom?: string; dateTo?: string }>({
-      query: ({ tenantId, dateFrom, dateTo }) => ({
+      query: ({ tenantId }) => ({
         url: '/metrics',
         params: {
           type: 'reliability',
           tenantId,
           granularity: 'day',
-          dateFrom,
-          dateTo,
+          // dateFrom,
+          // dateTo,
           includeTimeseries: true,
         },
       }),

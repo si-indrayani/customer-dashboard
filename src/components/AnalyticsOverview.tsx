@@ -8,9 +8,11 @@ import {
   BarChart3,
   ArrowRight
 } from 'lucide-react';
+import { useTenant } from '../contexts/TenantContext';
 import './AnalyticsOverview.css';
 
 const AnalyticsOverview: React.FC = () => {
+  const { selectedTenantId } = useTenant();
   const analyticsModules = [
     {
       path: '/analytics/traffic',
@@ -139,7 +141,7 @@ const AnalyticsOverview: React.FC = () => {
               <Trophy size={20} />
             </div>
             <div className="quick-stat-content">
-              <div className="quick-stat-value">tenant_001</div>
+              <div className="quick-stat-value">{selectedTenantId || 'No tenant selected'}</div>
               <div className="quick-stat-label">Active Tenant</div>
             </div>
           </div>

@@ -2,9 +2,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Define the GameRule interface
 export interface GameRule {
-  id: number;
-  gameId: number;
-  tenantId: number;
+  id: string;
+  gameId: string;
+  tenantId: string;
   name: string;
   description: string | null;
   ruleType: 'SCORING' | 'PROGRESSION' | 'REWARD' | 'VALIDATION' | 'CUSTOM';
@@ -17,18 +17,18 @@ export interface GameRule {
   updatedAt?: string;
   createdBy?: string;
   game?: {
-    id: number;
+    id: string;
     title: string;
   };
   tenant?: {
-    id: number;
+    id: string;
     name: string;
   };
 }
 
 // Define rule condition interface
 export interface RuleCondition {
-  id?: number;
+  id?: string;
   field: string;
   operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'in' | 'between';
   value: any;
@@ -37,15 +37,15 @@ export interface RuleCondition {
 
 // Define rule action interface
 export interface RuleAction {
-  id?: number;
+  id?: string;
   type: 'ADD_POINTS' | 'SUBTRACT_POINTS' | 'SET_LEVEL' | 'ADD_BADGE' | 'SEND_NOTIFICATION' | 'CUSTOM';
   parameters: Record<string, any>;
 }
 
 // Define rule creation payload
 export interface CreateRulePayload {
-  gameId: number;
-  tenantId: number;
+  gameId: string;
+  tenantId: string;
   name: string;
   description?: string;
   ruleType: GameRule['ruleType'];
@@ -53,6 +53,7 @@ export interface CreateRulePayload {
   actions: Omit<RuleAction, 'id'>[];
   priority?: number;
   metadata?: Record<string, any>;
+  questionCount?: number;
 }
 
 // Define rule field configuration (for dynamic form generation)
@@ -75,10 +76,8 @@ export interface RuleField {
 export const rulesApi = createApi({
   reducerPath: 'rulesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_GAMES_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
+    baseUrl: `${ import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api`,
     prepareHeaders: (headers) => {
-      const apiUrl = import.meta.env.VITE_GAMES_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-      console.log('Rules API Base URL:', `${apiUrl}/api`);
       headers.set('accept', 'application/json');
       headers.set('Content-Type', 'application/json');
       // Add ngrok bypass header to avoid browser warning
@@ -99,8 +98,12 @@ export const rulesApi = createApi({
   tagTypes: ['Rule', 'RuleField'],
   endpoints: (builder) => ({
     // Get all rules for a specific game and tenant
-    getGameRules: builder.query<GameRule[], { gameId: number; tenantId: number }>({
-      query: ({ gameId, tenantId }) => `/games/${gameId}/tenants/${tenantId}/rules`,
+    getGameRules: builder.query<GameRule[], { gameId: string; tenantId: string }>({
+      query: ({ gameId, tenantId }) => `api/client-games/${tenantId}/${gameId}`,
+      transformResponse: (response: any) => {
+        // Extract rules from the tenantGameConfig
+        return response.tenantGameConfig?.rules || [];
+      },
       providesTags: (result, _error, { gameId, tenantId }) =>
         result
           ? [
@@ -111,8 +114,18 @@ export const rulesApi = createApi({
     }),
 
     // Get all rules for a tenant (across all games)
-    getTenantRules: builder.query<GameRule[], number>({
-      query: (tenantId) => `/tenants/${tenantId}/rules`,
+    getTenantRules: builder.query<GameRule[], string>({
+      query: (tenantId) => `/client-games?tenantId=${tenantId}`,
+      transformResponse: (response: any[]) => {
+        // Extract all rules from all client games for this tenant
+        const allRules: GameRule[] = [];
+        response.forEach(clientGame => {
+          if (clientGame.tenantGameConfig?.rules) {
+            allRules.push(...clientGame.tenantGameConfig.rules);
+          }
+        });
+        return allRules;
+      },
       providesTags: (result, _error, tenantId) =>
         result
           ? [
@@ -123,17 +136,23 @@ export const rulesApi = createApi({
     }),
 
     // Get single rule by ID
-    getRule: builder.query<GameRule, number>({
+    getRule: builder.query<GameRule, string>({
       query: (id) => `/rules/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Rule', id }],
     }),
 
-    // Create new rule
+    // Create new rule (updates client game configuration)
     createRule: builder.mutation<GameRule, CreateRulePayload>({
-      query: (newRule) => ({
-        url: '/rules',
-        method: 'POST',
-        body: newRule,
+      query: ({ gameId, tenantId, ...ruleData }) => ({
+        url: `client-games/${tenantId}/${gameId}`,
+        method: 'PUT',
+        body: {
+          tenantGameConfig: {
+            rules: {
+              questionCount: ruleData.questionCount || 10
+            }
+          }
+        },
       }),
       invalidatesTags: (_result, _error, { gameId, tenantId }) => [
         { type: 'Rule', id: `GAME-${gameId}-TENANT-${tenantId}` },
@@ -142,7 +161,7 @@ export const rulesApi = createApi({
     }),
 
     // Update rule
-    updateRule: builder.mutation<GameRule, { id: number; updates: Partial<CreateRulePayload> }>({
+    updateRule: builder.mutation<GameRule, { id: string; updates: Partial<CreateRulePayload> }>({
       query: ({ id, updates }) => ({
         url: `/rules/${id}`,
         method: 'PUT',
@@ -156,7 +175,7 @@ export const rulesApi = createApi({
     }),
 
     // Delete rule
-    deleteRule: builder.mutation<{ success: boolean }, number>({
+    deleteRule: builder.mutation<{ success: boolean }, string>({
       query: (id) => ({
         url: `/rules/${id}`,
         method: 'DELETE',
@@ -167,7 +186,7 @@ export const rulesApi = createApi({
     }),
 
     // Update rule status
-    updateRuleStatus: builder.mutation<GameRule, { id: number; status: GameRule['status'] }>({
+    updateRuleStatus: builder.mutation<GameRule, { id: string; status: GameRule['status'] }>({
       query: ({ id, status }) => ({
         url: `/rules/${id}/status`,
         method: 'PUT',
@@ -187,7 +206,7 @@ export const rulesApi = createApi({
     }),
 
     // Test rule execution
-    testRule: builder.mutation<any, { ruleId: number; testData: Record<string, any> }>({
+    testRule: builder.mutation<any, { ruleId: string; testData: Record<string, any> }>({
       query: ({ ruleId, testData }) => ({
         url: `/rules/${ruleId}/test`,
         method: 'POST',

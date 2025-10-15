@@ -1,25 +1,17 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { 
-  Gamepad2, 
-  Trophy, 
-  Target, 
-  BarChart3, 
-  Calendar,
-  Filter,
-  RefreshCw,
-  TrendingUp
-} from 'lucide-react';
+import { useLocation, Link, Outlet } from 'react-router-dom';
+import { Calendar, Filter, RefreshCw, TrendingUp, Gamepad2, Target, Trophy, BarChart3 } from 'lucide-react';
+import { useTenant } from '../contexts/TenantContext';
 import './Analytics.css';
 
 const Analytics: React.FC = () => {
   const location = useLocation();
+  const { selectedTenantId } = useTenant();
   const [dateRange, setDateRange] = useState({
     from: '2025-09-01',
     to: '2025-09-30'
   });
   const [selectedGame, setSelectedGame] = useState('');
-  const [tenantId] = useState('tenant_001');
 
   // Array of dummy game images to randomly assign
   const dummyImages = [
@@ -177,7 +169,7 @@ const Analytics: React.FC = () => {
 
       {/* Analytics Content */}
       <main className="analytics-content">
-        <Outlet context={{ tenantId, dateRange, selectedGame, availableGames, getRandomImage }} />
+        <Outlet context={{ tenantId: selectedTenantId, dateRange, selectedGame, availableGames, getRandomImage }} />
       </main>
     </div>
   );

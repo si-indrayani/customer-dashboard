@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Save, Settings } from 'lucide-react';
 import { useTenant } from '../contexts/TenantContext';
+import { useCreateRuleMutation } from '../store/api/rulesApi';
 import ruleFieldsConfig from '../data/ruleFields.json';
 import './RuleCreation.css';
 
@@ -21,6 +22,7 @@ const RuleCreation: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { selectedTenantId: contextTenantId } = useTenant();
+  const [createRule, { isLoading: isCreatingRule }] = useCreateRuleMutation();
   
   const gameTitle = searchParams.get('gameTitle') || 'Unknown Game';
   const gameId = searchParams.get('gameId');
@@ -162,7 +164,7 @@ const RuleCreation: React.FC = () => {
         // Keep existing JSON file functionality
         console.log('Rule data for game:', gameTitle, processedData);
         
-                // Make API call to update game rules
+        // Make API call using RTK Query mutation
         if (tenantId && gameId && tenantId !== 'undefined' && gameId !== 'undefined' && tenantId.trim() !== '' && gameId.trim() !== '') {
           console.log('Making API call with:', { tenantId, gameId, processedData });
           
@@ -170,31 +172,24 @@ const RuleCreation: React.FC = () => {
           const formattedTenantId = tenantId.startsWith('tenant-') ? tenantId : `tenant-${tenantId}`;
           
           try {
-            const apiUrl = `https://secure-lacewing-sweeping.ngrok-free.app/api/client-games/${formattedTenantId}/game-${gameId}`;
-            console.log('API URL:', apiUrl);
-            const response = await fetch(apiUrl, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic YWRtaW46Z2FtaW5nMTIz',
-                'ngrok-skip-browser-warning': 'true'
-              },
-              body: JSON.stringify({
-                tenantGameConfig: {
-                  rules: processedData
-                }
-              })
-            });
+            // Create a proper rule object from the form data
+            const ruleData = {
+              gameId,
+              tenantId: formattedTenantId,
+              name: `Rule for ${gameTitle}`,
+              description: `Custom rule configuration for ${gameTitle}`,
+              ruleType: 'CUSTOM' as const,
+              conditions: [],
+              actions: [],
+              priority: 1,
+              metadata: processedData,
+              questionCount: processedData.questionCount || 10 // Pass questionCount from form data
+            };
 
-            console.log('API response status:', response.status);
-            if (!response.ok) {
-              throw new Error(`API call failed: ${response.status}`);
-            }
-
-            const apiResult = await response.json();
-            console.log('API call successful:', apiResult);
+            const result = await createRule(ruleData).unwrap();
+            console.log('Rule creation successful:', result);
           } catch (apiError) {
-            console.error('API call failed:', apiError);
+            console.error('Rule creation failed:', apiError);
             // Continue with the flow even if API call fails
           }
         } else {
@@ -443,17 +438,17 @@ const RuleCreation: React.FC = () => {
                 type="button" 
                 className="cancel-btn"
                 onClick={() => navigate('/games')}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isCreatingRule}
               >
                 Cancel
               </button>
               <button 
                 type="submit" 
                 className="submit-btn"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isCreatingRule}
               >
                 <Save size={16} />
-                {isSubmitting ? 'Creating Rule...' : 'Create Rule'}
+                {isSubmitting || isCreatingRule ? 'Creating Rule...' : 'Create Rule'}
               </button>
             </div>
           </form>

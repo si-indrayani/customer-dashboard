@@ -118,7 +118,6 @@ const Games: React.FC = () => {
 
         // Use real API if available
         await updateClientGameStatus({
-          id: gameToActivate.clientGameId,
           tenantId: gameData.tenantId,
           gameId: gameData.id, // This is the game UUID
           isActive: !gameToActivate.currentActive,
@@ -221,7 +220,6 @@ const Games: React.FC = () => {
       }
 
       await updateClientGameInfo({
-        id: gameToEdit.id,
         tenantId: gameData.tenantId,
         gameId: gameData.id, // This is the game UUID
         title: data.title,

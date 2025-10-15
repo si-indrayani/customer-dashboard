@@ -157,7 +157,7 @@ const Dashboard: React.FC = () => {
               <h3 className="chart-card-title">Traffic Analytics (Line Chart)</h3>
             </div>
             <div className="chart-card-content">
-              <TrafficChart dateRange={dateRange} />
+              <TrafficChart dateRange={dateRange} tenantId={selectedTenantId} />
             </div>
           </div>
           

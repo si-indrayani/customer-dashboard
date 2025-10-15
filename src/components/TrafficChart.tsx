@@ -25,17 +25,21 @@ ChartJS.register(
 );
 
 interface TrafficChartProps {
-  dateRange: { from: string; to: string };
+  dateRange: {
+    from: string;
+    to: string;
+  };
+  tenantId?: string;
 }
 
-const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange }) => {
+const TrafficChart: React.FC<TrafficChartProps> = ({ dateRange, tenantId }) => {
   // Use RTK Query to fetch traffic analytics data
   const {
     data: apiData,
     error,
     isLoading
   } = useGetTrafficAnalyticsQuery({
-    tenantId: 'tenant_001',
+    tenantId: tenantId || 'tenant_001', // Fallback to hardcoded value if not provided
     dateFrom: dateRange.from,
     dateTo: dateRange.to
   });

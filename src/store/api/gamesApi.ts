@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 // Define the Game interface based on your API response
 export interface Game {
   gameId: string;
-  title: string;
+  title?: string | null;
   description: string | null;
   gameType: 'HOSTED_LINK' | 'UPLOADED_BUILD';
   url: string;
@@ -160,28 +160,28 @@ export const gamesApi = createApi({
     }),
 
     // Update client game active status (Show/Hide game for tenant)
-    updateClientGameStatus: builder.mutation<ClientGame, { id: number; tenantId: string; gameId: string; isActive: boolean }>({
-      query: ({ id, tenantId, gameId, isActive }) => ({
+    updateClientGameStatus: builder.mutation<ClientGame, { tenantId: string; gameId: string; isActive: boolean }>({
+      query: ({ tenantId, gameId, isActive }) => ({
         url: `/client-games/${tenantId}/${gameId}`,
         method: 'PUT',
         body: { tenantId,  isActive },
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Game', id: `client-${id}` },
+      invalidatesTags: (_result, _error, { tenantId, gameId }) => [
+        { type: 'Game', id: `client-${tenantId}-${gameId}` },
         { type: 'Game', id: 'CLIENT_LIST' },
         { type: 'Game', id: 'LIST' },
       ],
     }),
 
     // Update client game title and description
-    updateClientGameInfo: builder.mutation<ClientGame, { id: number; tenantId: string; gameId: string; title: string; description: string }>({
-      query: ({ id, tenantId, gameId, title, description }) => ({
+    updateClientGameInfo: builder.mutation<ClientGame, { tenantId: string; gameId: string; title: string; description: string }>({
+      query: ({ tenantId, gameId, title, description }) => ({
         url: `/client-games/${tenantId}/${gameId}`,
         method: 'PUT',
         body: { title, description },
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: 'Game', id: `client-${id}` },
+      invalidatesTags: (_result, _error, { tenantId, gameId }) => [
+        { type: 'Game', id: `client-${tenantId}-${gameId}` },
         { type: 'Game', id: 'CLIENT_LIST' },
         { type: 'Game', id: 'LIST' },
       ],
