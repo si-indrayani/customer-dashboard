@@ -18,10 +18,10 @@ const Games: React.FC = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [gameToToggle, setGameToToggle] = useState<{ id: number; currentStatus: string; title: string } | null>(null);
   const [showActivationModal, setShowActivationModal] = useState(false);
-  const [gameToActivate, setGameToActivate] = useState<{ clientGameId: number; currentActive: boolean; title: string } | null>(null);
+  const [gameToActivate, setGameToActivate] = useState<{ clientGameId: string; currentActive: boolean; title: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<{ status: 'success' | 'error'; message: string } | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [gameToEdit, setGameToEdit] = useState<{ id: number; title: string; description: string } | null>(null);
+  const [gameToEdit, setGameToEdit] = useState<{ id: string; title: string; description: string } | null>(null);
   
   // Array of dummy game images to randomly assign
   const dummyImages = [
@@ -99,7 +99,7 @@ const Games: React.FC = () => {
   console.log('==================');
 
   // Handle show/hide game toggle - show confirmation first
-  const handleToggleGameVisibility = (clientGameId: number, currentStatus: boolean, gameTitle: string) => {
+  const handleToggleGameVisibility = (clientGameId: string, currentStatus: boolean, gameTitle: string) => {
     setGameToActivate({ clientGameId, currentActive: currentStatus, title: gameTitle });
     setShowActivationModal(true);
   };
@@ -200,7 +200,7 @@ const Games: React.FC = () => {
   };
 
   // Handle edit game info
-  const handleEditGameInfo = (clientGameId: number, currentTitle: string, currentDescription: string) => {
+  const handleEditGameInfo = (clientGameId: string, currentTitle: string, currentDescription: string) => {
     setGameToEdit({ 
       id: clientGameId, 
       title: currentTitle || '', 
@@ -257,7 +257,7 @@ const Games: React.FC = () => {
     setGameToEdit(null);
   };
 
-  const handleCreateGameRule = (gameId: number, gameTitle: string) => {
+  const handleCreateGameRule = (gameId: string, gameTitle: string) => {
     // Navigate to rule creation page with game details as URL params
     const tenantId = selectedTenantId; // Get current tenant ID
     console.log('Creating rule for game:', { gameId, gameTitle, tenantId, selectedTenantId });
@@ -289,14 +289,14 @@ const Games: React.FC = () => {
   // Compute table data from client games ONLY when tenant ID is provided
   const tableData = selectedTenantId && clientGames && clientGames.length > 0 ?
     clientGames.map(clientGame => ({
-      id: clientGame.game?.gameId || clientGame.gameId,
+      id: clientGame.gameId,
       title: (clientGame as any).title || clientGame.game?.title || 'Unknown Game',
       description: (clientGame as any).description || clientGame.game?.description || '',
       gameType: clientGame.game?.gameType || 'UNKNOWN',
       url: clientGame.game?.url || '#',
       status: clientGame.game?.status || 'UNKNOWN',
       isActive: clientGame.isActive,
-      clientGameId: clientGame.id,
+      clientGameId: clientGame.gameId,
       tenantId: clientGame.tenantId,
       createdAt: clientGame.createdAt,
       tenantName: (clientGame as any).tenant?.name,
